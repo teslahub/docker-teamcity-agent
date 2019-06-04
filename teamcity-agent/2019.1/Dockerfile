@@ -3,13 +3,13 @@ FROM jetbrains/teamcity-agent:2019.1
 # Cleanup previous sdk 2.2.103
 RUN rm /usr/bin/dotnet && rm -rf /usr/share/dotnet
 
-# from 3.0
+# from 3.0 bionic; https://github.com/dotnet/dotnet-docker/blob/master/3.0/sdk/bionic/amd64/Dockerfile
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libc6 \
         libgcc1 \
         libgssapi-krb5-2 \
-        libicu63 \
+        libicu60 \
         libssl1.1 \
         libstdc++6 \
         zlib1g \
