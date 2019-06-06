@@ -69,11 +69,10 @@ RUN curl -SL --output PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg https://pws
     && find /usr/share/powershell -print | grep -i '.*[.]nupkg$' | xargs rm
 
 # Install Coverlet Console global tool
-ENV DOTNET_COVERLET_VERSION=1.5.1
-
-RUN dotnet tool install --global coverlet.console --version 1.5.1
-
 # Install SonarScanner for .Net Core 2.1 global tool
-ENV DOTNET_SONARSCANNER_VERSION=4.6.2
+ENV DOTNET_COVERLET_VERSION=1.5.1 \
+    DOTNET_SONARSCANNER_VERSION=4.6.2 \
+    PATH="$PATH:/root/.dotnet/tools"
 
-RUN dotnet tool install --global dotnet-sonarscanner --version 4.6.2
+RUN dotnet tool install --global coverlet.console --version $DOTNET_COVERLET_VERSION \
+    && dotnet tool install --global dotnet-sonarscanner --version $DOTNET_SONARSCANNER_VERSION
