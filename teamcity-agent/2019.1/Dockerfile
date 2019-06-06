@@ -22,7 +22,7 @@ ENV DOTNET_SDK_VERSION21=2.1.700 \
     DOTNET_SDK_VERSION30=3.0.100-preview5-011568 \
     DOTNET_SDK_VERSION=3.0.100-preview5-011568 \
     # Configure web servers to bind to port 80 when present
-    ASPNETCORE_URLS=http://+:80 \
+    # ASPNETCORE_URLS=http://+:80 \
     # Enable detection of running in a container
     DOTNET_RUNNING_IN_CONTAINER=true \
     # Enable correct mode for dotnet watch (only mode supported in a container)
@@ -37,14 +37,14 @@ RUN curl -SL --output dotnet21.tar.gz https://dotnetcli.blob.core.windows.net/do
     && tar -zxf dotnet21.tar.gz -C /usr/share/dotnet \
     && rm dotnet21.tar.gz \
     # && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
-    curl -SL --output dotnet22.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DOTNET_SDK_VERSION22/dotnet-sdk-$DOTNET_SDK_VERSION22-linux-x64.tar.gz \
+    && curl -SL --output dotnet22.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DOTNET_SDK_VERSION22/dotnet-sdk-$DOTNET_SDK_VERSION22-linux-x64.tar.gz \
     && dotnet_sha512='1d660a323180df3da8c6e0ea3f439d6bbec29670d498ac884f38bf3cdffbb041c7afff66171cdfd24c82394b845b135b057404def1fce9f206853726382bc42b' \
     && echo "$dotnet_sha512 dotnet22.tar.gz" | sha512sum -c - \
     # && mkdir -p /usr/share/dotnet \
     && tar -zxf dotnet22.tar.gz -C /usr/share/dotnet \
     && rm dotnet22.tar.gz \
     # && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
-    curl -SL --output dotnet30.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DOTNET_SDK_VERSION/dotnet-sdk-$DOTNET_SDK_VERSION-linux-x64.tar.gz \
+    && curl -SL --output dotnet30.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DOTNET_SDK_VERSION/dotnet-sdk-$DOTNET_SDK_VERSION-linux-x64.tar.gz \
     && dotnet_sha512='207af1f3161cbd0864902370475fcad5b500bf2b7199b06445e7c338053bc7cb0157ee1b4d00a37a351eae6e209417ee4a15eeacee086aac0ac1be7a62f3ad0b' \
     && echo "$dotnet_sha512 dotnet30.tar.gz" | sha512sum -c - \
     # && mkdir -p /usr/share/dotnet \
