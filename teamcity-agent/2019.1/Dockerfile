@@ -76,3 +76,6 @@ ENV DOTNET_COVERLET_VERSION=1.5.1 \
 
 RUN dotnet tool install --global coverlet.console --version $DOTNET_COVERLET_VERSION \
     && dotnet tool install --global dotnet-sonarscanner --version $DOTNET_SONARSCANNER_VERSION
+
+# Install module Pester
+RUN pwsh -Command "Install-Module -Name Pester -Force"
