@@ -73,6 +73,7 @@ RUN curl -SL --output PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg https://pws
 ENV DOTNET_COVERLET_VERSION=1.5.1 \
     DOTNET_SONARSCANNER_VERSION=4.6.2 \
     DOTNET_REPORTGENERATOR_VERSION=4.2.2 \
+    REPORTGENERATOR_PATH=/root/.dotnet/tools/reportgenerator \
     PATH="$PATH:/root/.dotnet/tools"
 
 RUN dotnet tool install --global coverlet.console --version $DOTNET_COVERLET_VERSION \
