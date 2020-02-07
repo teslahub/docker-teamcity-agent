@@ -1,9 +1,9 @@
-FROM jetbrains/teamcity-agent:2019.1.3
+FROM jetbrains/teamcity-agent:2019.2.1
 
 # Cleanup previous sdk 2.2.103
 RUN rm /usr/bin/dotnet && rm -rf /usr/share/dotnet
 
-# from 3.0 bionic; https://github.com/dotnet/dotnet-docker/blob/master/3.0/sdk/bionic/amd64/Dockerfile
+# from 3.1 bionic; https://github.com/dotnet/dotnet-docker/blob/master/3.1/sdk/bionic/amd64/Dockerfile
 # jetbrains/teamcity-agent:2019.1 already have this below
 # RUN apt-get update \
 #     && apt-get install -y --no-install-recommends \
@@ -17,11 +17,10 @@ RUN rm /usr/bin/dotnet && rm -rf /usr/share/dotnet
 #     && rm -rf /var/lib/apt/lists/*
 
 # Install multi .NET Core SDK
-ENV DOTNET_SDK_VERSION21=2.1.802 \
-    DOTNET_SDK_VERSION22=2.2.402 \
-    DOTNET_SDK_VERSION30P5=3.0.100-preview5-011568 \
-    DOTNET_SDK_VERSION30=3.0.100 \
-    DOTNET_SDK_VERSION=3.0.100 \
+ENV DOTNET_SDK_VERSION21=2.1.803 \
+    DOTNET_SDK_VERSION22=2.2.207 \
+    DOTNET_SDK_VERSION31=3.1.101 \
+    DOTNET_SDK_VERSION=3.1.101 \
     # Configure web servers to bind to port 80 when present
     # ASPNETCORE_URLS=http://+:80 \
     # Enable detection of running in a container
@@ -31,39 +30,34 @@ ENV DOTNET_SDK_VERSION21=2.1.802 \
     # Skip extraction of XML docs - generally not useful within an image/container - helps performance
     NUGET_XMLDOC_MODE=skip
 
-RUN curl -SL --output dotnet21.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DOTNET_SDK_VERSION21/dotnet-sdk-$DOTNET_SDK_VERSION21-linux-x64.tar.gz \
-    && dotnet_sha512='8601ec68fa8978c5a08a696cc69f5e0aa9dabf274bade40e2fd9ded2e563f2cc7a1cb418a95c9b52e1fa9b6c4a30993be68cb3b6bbda4598c57b37ec9ce992ad' \
+RUN curl -SL --output dotnet21.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$DOTNET_SDK_VERSION21/dotnet-sdk-$DOTNET_SDK_VERSION21-linux-x64.tar.gz \
+    && dotnet_sha512='57d48d6ca1bd92ac348dc05220d984811c0cf005774d7afdfbbf125a842acb0a26572146ed25a7eb26f4e0404fe840b70d1e7ec1fb7c9a5c6cfe81fefc41b363' \
     && echo "$dotnet_sha512 dotnet21.tar.gz" | sha512sum -c - \
     && mkdir -p /usr/share/dotnet \
     && tar -zxf dotnet21.tar.gz -C /usr/share/dotnet \
     && rm dotnet21.tar.gz \
     # && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
-    && curl -SL --output dotnet22.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DOTNET_SDK_VERSION22/dotnet-sdk-$DOTNET_SDK_VERSION22-linux-x64.tar.gz \
-    && dotnet_sha512='81937de0874ee837e3b42e36d1cf9e04bd9deff6ba60d0162ae7ca9336a78f733e624136d27f559728df3f681a72a669869bf91d02db47c5331398c0cfda9b44' \
+    && curl -SL --output dotnet22.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$DOTNET_SDK_VERSION22/dotnet-sdk-$DOTNET_SDK_VERSION22-linux-x64.tar.gz \
+    && dotnet_sha512='9d70b4a8a63b66da90544087199a0f681d135bf90d43ca53b12ea97cc600a768b0a3d2f824cfe27bd3228e058b060c63319cd86033be8b8d27925283f99de958' \
     && echo "$dotnet_sha512 dotnet22.tar.gz" | sha512sum -c - \
     # && mkdir -p /usr/share/dotnet \
     && tar -zxf dotnet22.tar.gz -C /usr/share/dotnet \
     && rm dotnet22.tar.gz \
     # && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
-    && curl -SL --output dotnet30p5.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DOTNET_SDK_VERSION30P5/dotnet-sdk-$DOTNET_SDK_VERSION30P5-linux-x64.tar.gz \
-    && dotnet_sha512='207af1f3161cbd0864902370475fcad5b500bf2b7199b06445e7c338053bc7cb0157ee1b4d00a37a351eae6e209417ee4a15eeacee086aac0ac1be7a62f3ad0b' \
-    && echo "$dotnet_sha512 dotnet30p5.tar.gz" | sha512sum -c - \
+    && curl -SL --output dotnet31.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$DOTNET_SDK_VERSION31/dotnet-sdk-$DOTNET_SDK_VERSION31-linux-x64.tar.gz \
+    && dotnet_sha512='eeee75323be762c329176d5856ec2ecfd16f06607965614df006730ed648a5b5d12ac7fd1942fe37cfc97e3013e796ef278e7c7bc4f32b8680585c4884a8a6a1' \
+    && echo "$dotnet_sha512 dotnet31.tar.gz" | sha512sum -c - \
     # && mkdir -p /usr/share/dotnet \
-    && tar -zxf dotnet30p5.tar.gz -C /usr/share/dotnet \
-    && rm dotnet30p5.tar.gz \
-    # && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
-    && curl -SL --output dotnet30.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DOTNET_SDK_VERSION30/dotnet-sdk-$DOTNET_SDK_VERSION30-linux-x64.tar.gz \
-    && dotnet_sha512='766da31f9a0bcfbf0f12c91ea68354eb509ac2111879d55b656f19299c6ea1c005d31460dac7c2a4ef82b3edfea30232c82ba301fb52c0ff268d3e3a1b73d8f7' \
-    && echo "$dotnet_sha512 dotnet30.tar.gz" | sha512sum -c - \
-    # && mkdir -p /usr/share/dotnet \
-    && tar -zxf dotnet30.tar.gz -C /usr/share/dotnet \
-    && rm dotnet30.tar.gz \
+    && tar -zxf dotnet31.tar.gz -C /usr/share/dotnet \
+    && rm dotnet31.tar.gz \
     && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
 
 # Trigger first run experience by running arbitrary cmd
-#RUN dotnet help
+RUN dotnet help
 
-ENV NODE_VERSION=10.16.3 NPM_VERSION=6.9.0
+# https://github.com/nodejs/docker-node/blob/master/12/buster/Dockerfile
+ENV NODE_VERSION=12.15.0 \
+    NPM_VERSION=6.13.4
 
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && case "${dpkgArch##*-}" in \
@@ -102,7 +96,7 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-ENV YARN_VERSION 1.17.3
+ENV YARN_VERSION 1.21.1
 
 RUN set -ex \
   && for key in \
@@ -122,24 +116,24 @@ RUN set -ex \
   && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
 
 # Install PowerShell global tool
-ENV POWERSHELL_VERSION=7.0.0-preview.4 \
-    POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-DotnetCoreSDK-Ubuntu-18.04
-
+ENV POWERSHELL_VERSION=7.0.0-rc.1
 RUN curl -SL --output PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg https://pwshtool.blob.core.windows.net/tool/$POWERSHELL_VERSION/PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg \
-    && powershell_sha512='0fb0167e13560371bffec38a4a87bf39377fa1a5cc39b3a078ddec8803212bede73e5821861036ba5c345bd55c74703134c9b55c49385f87dae9e2de9239f5d9' \
+    && powershell_sha512='0af45c1aca64b99a611987ac77f2143621a77f03073f17c6bf1e225bb5e82c574db67362b1c941d27214a2a4830de6ecf33ac5d0079e55223b8b02d3c86076c8' \
     && echo "$powershell_sha512  PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg" | sha512sum -c - \
     && mkdir -p /usr/share/powershell \
     && dotnet tool install --add-source / --tool-path /usr/share/powershell --version $POWERSHELL_VERSION PowerShell.Linux.x64 \
+    && dotnet nuget locals all --clear \
     && rm PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg \
     && ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
+    && chmod 755 /usr/share/powershell/pwsh \
     # To reduce image size, remove the copy nupkg that nuget keeps.
     && find /usr/share/powershell -print | grep -i '.*[.]nupkg$' | xargs rm
 
 # Install Coverlet Console global tool
 # Install SonarScanner for .Net Core 2.1 global tool
-ENV DOTNET_COVERLET_VERSION=1.6.0 \
-    DOTNET_SONARSCANNER_VERSION=4.7.1 \
-    DOTNET_REPORTGENERATOR_VERSION=4.3.0 \
+ENV DOTNET_COVERLET_VERSION=1.7.0 \
+    DOTNET_SONARSCANNER_VERSION=4.8.0 \
+    DOTNET_REPORTGENERATOR_VERSION=4.4.6 \
     PATH="$PATH:/root/.dotnet/tools"
 
 RUN dotnet tool install --global coverlet.console --version $DOTNET_COVERLET_VERSION \
