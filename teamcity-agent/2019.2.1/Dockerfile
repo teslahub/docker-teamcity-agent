@@ -1,4 +1,4 @@
-FROM jetbrains/teamcity-agent:2019.2.1
+FROM jetbrains/teamcity-agent:2019.1
 
 # Cleanup previous sdk 2.2.103
 RUN rm /usr/bin/dotnet && rm -rf /usr/share/dotnet
@@ -17,10 +17,10 @@ RUN rm /usr/bin/dotnet && rm -rf /usr/share/dotnet
 #     && rm -rf /var/lib/apt/lists/*
 
 # Install multi .NET Core SDK
-ENV DOTNET_SDK_VERSION21=2.1.803 \
+ENV DOTNET_SDK_VERSION21=2.1.804 \
     DOTNET_SDK_VERSION22=2.2.207 \
-    DOTNET_SDK_VERSION31=3.1.101 \
-    DOTNET_SDK_VERSION=3.1.101 \
+    DOTNET_SDK_VERSION31=3.1.102 \
+    DOTNET_SDK_VERSION=3.1.102 \
     # Configure web servers to bind to port 80 when present
     # ASPNETCORE_URLS=http://+:80 \
     # Enable detection of running in a container
@@ -31,7 +31,7 @@ ENV DOTNET_SDK_VERSION21=2.1.803 \
     NUGET_XMLDOC_MODE=skip
 
 RUN curl -SL --output dotnet21.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$DOTNET_SDK_VERSION21/dotnet-sdk-$DOTNET_SDK_VERSION21-linux-x64.tar.gz \
-    && dotnet_sha512='57d48d6ca1bd92ac348dc05220d984811c0cf005774d7afdfbbf125a842acb0a26572146ed25a7eb26f4e0404fe840b70d1e7ec1fb7c9a5c6cfe81fefc41b363' \
+    && dotnet_sha512='82b039856dadd2b47fa56a262d1a1a389132f0db037d4ee5c0872f2949c2cd447c33a978e1f532783119aa416860e03f26b840863ca3a97392a4b77f8df5bf66' \
     && echo "$dotnet_sha512 dotnet21.tar.gz" | sha512sum -c - \
     && mkdir -p /usr/share/dotnet \
     && tar -zxf dotnet21.tar.gz -C /usr/share/dotnet \
@@ -45,7 +45,7 @@ RUN curl -SL --output dotnet21.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk
     && rm dotnet22.tar.gz \
     # && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
     && curl -SL --output dotnet31.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$DOTNET_SDK_VERSION31/dotnet-sdk-$DOTNET_SDK_VERSION31-linux-x64.tar.gz \
-    && dotnet_sha512='eeee75323be762c329176d5856ec2ecfd16f06607965614df006730ed648a5b5d12ac7fd1942fe37cfc97e3013e796ef278e7c7bc4f32b8680585c4884a8a6a1' \
+    && dotnet_sha512='9cacdc9700468a915e6fa51a3e5539b3519dd35b13e7f9d6c4dd0077e298baac0e50ad1880181df6781ef1dc64a232e9f78ad8e4494022987d12812c4ca15f29' \
     && echo "$dotnet_sha512 dotnet31.tar.gz" | sha512sum -c - \
     # && mkdir -p /usr/share/dotnet \
     && tar -zxf dotnet31.tar.gz -C /usr/share/dotnet \
@@ -56,7 +56,7 @@ RUN curl -SL --output dotnet21.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk
 RUN dotnet help
 
 # https://github.com/nodejs/docker-node/blob/master/12/buster/Dockerfile
-ENV NODE_VERSION=12.15.0 \
+ENV NODE_VERSION=12.16.1 \
     NPM_VERSION=6.13.4
 
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
@@ -94,9 +94,12 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
   && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
   && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
-  && ln -s /usr/local/bin/node /usr/local/bin/nodejs
+  && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
+  # smoke tests
+  && node --version \
+  && npm --version
 
-ENV YARN_VERSION 1.21.1
+ENV YARN_VERSION 1.22.0
 
 RUN set -ex \
   && for key in \
@@ -113,12 +116,15 @@ RUN set -ex \
   && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/ \
   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
-  && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
+  && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
+  # smoke test
+  && yarn --version
 
 # Install PowerShell global tool
-ENV POWERSHELL_VERSION=7.0.0-rc.1
+ENV POWERSHELL_VERSION=7.0.0-rc.2 \
+    POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-DotnetCoreSDK-Ubuntu-18.04
 RUN curl -SL --output PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg https://pwshtool.blob.core.windows.net/tool/$POWERSHELL_VERSION/PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg \
-    && powershell_sha512='0af45c1aca64b99a611987ac77f2143621a77f03073f17c6bf1e225bb5e82c574db67362b1c941d27214a2a4830de6ecf33ac5d0079e55223b8b02d3c86076c8' \
+    && powershell_sha512='59abcc11bd43fc8c1938a1854447c762092f03b5e2c6c354a82559eed6852e3920c5543c085fbe6fbe98871f96cd7409bb76b1537d3d8dee4e7432d578ec7603' \
     && echo "$powershell_sha512  PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg" | sha512sum -c - \
     && mkdir -p /usr/share/powershell \
     && dotnet tool install --add-source / --tool-path /usr/share/powershell --version $POWERSHELL_VERSION PowerShell.Linux.x64 \
@@ -133,7 +139,7 @@ RUN curl -SL --output PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg https://pws
 # Install SonarScanner for .Net Core 2.1 global tool
 ENV DOTNET_COVERLET_VERSION=1.7.0 \
     DOTNET_SONARSCANNER_VERSION=4.8.0 \
-    DOTNET_REPORTGENERATOR_VERSION=4.4.6 \
+    DOTNET_REPORTGENERATOR_VERSION=4.4.7 \
     PATH="$PATH:/root/.dotnet/tools"
 
 RUN dotnet tool install --global coverlet.console --version $DOTNET_COVERLET_VERSION \
