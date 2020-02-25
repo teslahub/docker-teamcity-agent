@@ -1,4 +1,4 @@
-FROM jetbrains/teamcity-agent:2019.1
+FROM jetbrains/teamcity-agent:2019.2.2
 
 # Cleanup previous sdk 2.2.103
 RUN rm /usr/bin/dotnet && rm -rf /usr/share/dotnet
