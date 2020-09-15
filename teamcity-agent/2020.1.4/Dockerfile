@@ -120,32 +120,61 @@ RUN set -ex \
   && yarn --version
 
 # Install PowerShell global tool
+# Install Coverlet Console global tool
+# Install SonarScanner for .Net Core 2.1 global tool
+# Install ReportGenerator global tool
 ENV POWERSHELL_VERSION=7.0.3 \
-    POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-DotnetCoreSDK-Ubuntu-18.04
+    POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-DotnetCoreSDK-Ubuntu-18.04 \
+    DOTNET_COVERLET_VERSION=1.7.2 \
+    DOTNET_SONARSCANNER_VERSION=4.10.0 \
+    DOTNET_REPORTGENERATOR_VERSION=4.6.7
+
 RUN curl -SL --output PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg https://pwshtool.blob.core.windows.net/tool/$POWERSHELL_VERSION/PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg \
     && powershell_sha512='580f405d26df40378f3abff3ec7e4ecaa46bb0e46bcb2b3c16eff2ead28fde5aaa55c19501f73315b454e68d98c9ef49f8887c36e7c733d7c8ea3dd70977da2f' \
     && echo "$powershell_sha512  PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg" | sha512sum -c - \
     && mkdir -p /usr/share/powershell \
     && dotnet tool install --add-source / --tool-path /usr/share/powershell --version $POWERSHELL_VERSION PowerShell.Linux.x64 \
-    && dotnet nuget locals all --clear \
+    # && dotnet nuget locals all --clear \
     && rm PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg \
     && ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
     && chmod 755 /usr/share/powershell/pwsh \
     # To reduce image size, remove the copy nupkg that nuget keeps.
-    && find /usr/share/powershell -print | grep -i '.*[.]nupkg$' | xargs rm
+    && find /usr/share/powershell -print | grep -i '.*[.]nupkg$' | xargs rm \
+    curl -SL --output coverlet.console.$DOTNET_COVERLET_VERSION.nupkg https://globalcdn.nuget.org/packages/coverlet.console.$DOTNET_COVERLET_VERSION.nupkg \
+    && coverlet_sha512='29632928f65e4019f22d4d6014cdc7aa123e50263c43d146e5599b82c074bea8165d73a786171738c7600872186c370d22f49292bc147d0c48997c5b1ab4e779' \
+    && echo "$coverlet_sha512  coverlet.console.$DOTNET_COVERLET_VERSION.nupkg" | sha512sum -c - \
+    && mkdir -p /usr/share/coverlet.console \
+    && dotnet tool install --add-source / --tool-path /usr/share/coverlet.console --version $DOTNET_COVERLET_VERSION coverlet.console \
+    && rm coverlet.console.$DOTNET_COVERLET_VERSION.nupkg \
+    && ln -s /usr/share/coverlet.console/coverlet /usr/bin/coverlet \
+    && chmod 755 /usr/share/coverlet.console/coverlet \
+    && find /usr/share/coverlet.console -print | grep -i '.*[.]nupkg$' | xargs rm \
+    curl -SL --output dotnet-sonarscanner.$DOTNET_SONARSCANNER_VERSION.nupkg https://globalcdn.nuget.org/packages/dotnet-sonarscanner.$DOTNET_SONARSCANNER_VERSION.nupkg \
+    && dotnet_sonarscanner_sha512='8e947712d30f47840a02349b92c93cbfe0174b9291683ea373b3ab7584edc27ad97a95a1405c44538a2a3f9fb6311b2efd6c4f24e0d171ba3e73dfd4746e8265' \
+    && echo "$dotnet_sonarscanner_sha512  dotnet-sonarscanner.$DOTNET_SONARSCANNER_VERSION.nupkg" | sha512sum -c - \
+    && mkdir -p /usr/share/dotnet-sonarscanner \
+    && dotnet tool install --add-source / --tool-path /usr/share/dotnet-sonarscanner --version $DOTNET_SONARSCANNER_VERSION dotnet-sonarscanner \
+    && rm dotnet-sonarscanner.$DOTNET_SONARSCANNER_VERSION.nupkg \
+    && ln -s /usr/share/dotnet-sonarscanner/dotnet-sonarscanner /usr/bin/dotnet-sonarscanner \
+    && chmod 755 /usr/share/dotnet-sonarscanner/dotnet-sonarscanner \
+    && find /usr/share/dotnet-sonarscanner -print | grep -i '.*[.]nupkg$' | xargs rm \
+    curl -SL --output dotnet-reportgenerator-globaltool.$DOTNET_REPORTGENERATOR_VERSION.nupkg https://globalcdn.nuget.org/packages/dotnet-reportgenerator-globaltool.$DOTNET_REPORTGENERATOR_VERSION.nupkg \
+    && reportgenerator_sha512='a888c246df99e56e60bb460dcf27e1ef37865f4d0b5524a6edf297cee44ec65d22e87a519095cdb59ec1f012d8c43d6c2794a86b2b0b7a0b2126e13abe17c058' \
+    && echo "$reportgenerator_sha512  dotnet-reportgenerator-globaltool.$DOTNET_REPORTGENERATOR_VERSION.nupkg" | sha512sum -c - \
+    && mkdir -p /usr/share/dotnet-reportgenerator-globaltool \
+    && dotnet tool install --add-source / --tool-path /usr/share/dotnet-reportgenerator-globaltool --version $DOTNET_REPORTGENERATOR_VERSION dotnet-reportgenerator-globaltool \
+    && rm dotnet-reportgenerator-globaltool.$DOTNET_REPORTGENERATOR_VERSION.nupkg \
+    && ln -s /usr/share/dotnet-reportgenerator-globaltool/reportgenerator /usr/bin/reportgenerator \
+    && chmod 755 /usr/share/dotnet-reportgenerator-globaltool/reportgenerator \
+    && find /usr/share/dotnet-reportgenerator-globaltool -print | grep -i '.*[.]nupkg$' | xargs rm \
+    && dotnet nuget locals all --clear
 
-# Install Coverlet Console global tool
-# Install SonarScanner for .Net Core 2.1 global tool
-ENV DOTNET_COVERLET_VERSION=1.7.2 \
-    DOTNET_SONARSCANNER_VERSION=4.10.0 \
-    DOTNET_REPORTGENERATOR_VERSION=4.6.7 \
-    PATH="$PATH:/root/.dotnet/tools"
+USER buildagent
 
-RUN dotnet tool install --global coverlet.console --version $DOTNET_COVERLET_VERSION \
-    && dotnet tool install --global dotnet-sonarscanner --version $DOTNET_SONARSCANNER_VERSION \
-    && dotnet tool install --global dotnet-reportgenerator-globaltool --version $DOTNET_REPORTGENERATOR_VERSION
+# ENV  PATH="$PATH:/home/buildagent/.dotnet/tools"
+# RUN dotnet tool install --global coverlet.console --version $DOTNET_COVERLET_VERSION \
+#     && dotnet tool install --global dotnet-sonarscanner --version $DOTNET_SONARSCANNER_VERSION \
+#     && dotnet tool install --global dotnet-reportgenerator-globaltool --version $DOTNET_REPORTGENERATOR_VERSION
 
 # Install module Pester
 RUN pwsh -Command "Install-Module -Name Pester -Force"
-
-USER buildagent
