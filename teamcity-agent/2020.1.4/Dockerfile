@@ -1,5 +1,7 @@
 FROM jetbrains/teamcity-agent:2020.1.4
 
+USER root
+
 # Cleanup previous sdk 3.1.401
 RUN rm /usr/bin/dotnet && rm -rf /usr/share/dotnet
 
@@ -145,3 +147,5 @@ RUN dotnet tool install --global coverlet.console --version $DOTNET_COVERLET_VER
 
 # Install module Pester
 RUN pwsh -Command "Install-Module -Name Pester -Force"
+
+USER buildagent
