@@ -140,7 +140,7 @@ RUN curl -SL --output PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg https://pws
     && chmod 755 /usr/share/powershell/pwsh \
     # To reduce image size, remove the copy nupkg that nuget keeps.
     && find /usr/share/powershell -print | grep -i '.*[.]nupkg$' | xargs rm \
-    curl -SL --output coverlet.console.$DOTNET_COVERLET_VERSION.nupkg https://globalcdn.nuget.org/packages/coverlet.console.$DOTNET_COVERLET_VERSION.nupkg \
+    && curl -SL --output coverlet.console.$DOTNET_COVERLET_VERSION.nupkg https://globalcdn.nuget.org/packages/coverlet.console.$DOTNET_COVERLET_VERSION.nupkg \
     && coverlet_sha512='29632928f65e4019f22d4d6014cdc7aa123e50263c43d146e5599b82c074bea8165d73a786171738c7600872186c370d22f49292bc147d0c48997c5b1ab4e779' \
     && echo "$coverlet_sha512  coverlet.console.$DOTNET_COVERLET_VERSION.nupkg" | sha512sum -c - \
     && mkdir -p /usr/share/coverlet.console \
@@ -149,7 +149,7 @@ RUN curl -SL --output PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg https://pws
     && ln -s /usr/share/coverlet.console/coverlet /usr/bin/coverlet \
     && chmod 755 /usr/share/coverlet.console/coverlet \
     && find /usr/share/coverlet.console -print | grep -i '.*[.]nupkg$' | xargs rm \
-    curl -SL --output dotnet-sonarscanner.$DOTNET_SONARSCANNER_VERSION.nupkg https://globalcdn.nuget.org/packages/dotnet-sonarscanner.$DOTNET_SONARSCANNER_VERSION.nupkg \
+    && curl -SL --output dotnet-sonarscanner.$DOTNET_SONARSCANNER_VERSION.nupkg https://globalcdn.nuget.org/packages/dotnet-sonarscanner.$DOTNET_SONARSCANNER_VERSION.nupkg \
     && dotnet_sonarscanner_sha512='8e947712d30f47840a02349b92c93cbfe0174b9291683ea373b3ab7584edc27ad97a95a1405c44538a2a3f9fb6311b2efd6c4f24e0d171ba3e73dfd4746e8265' \
     && echo "$dotnet_sonarscanner_sha512  dotnet-sonarscanner.$DOTNET_SONARSCANNER_VERSION.nupkg" | sha512sum -c - \
     && mkdir -p /usr/share/dotnet-sonarscanner \
@@ -158,7 +158,7 @@ RUN curl -SL --output PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg https://pws
     && ln -s /usr/share/dotnet-sonarscanner/dotnet-sonarscanner /usr/bin/dotnet-sonarscanner \
     && chmod 755 /usr/share/dotnet-sonarscanner/dotnet-sonarscanner \
     && find /usr/share/dotnet-sonarscanner -print | grep -i '.*[.]nupkg$' | xargs rm \
-    curl -SL --output dotnet-reportgenerator-globaltool.$DOTNET_REPORTGENERATOR_VERSION.nupkg https://globalcdn.nuget.org/packages/dotnet-reportgenerator-globaltool.$DOTNET_REPORTGENERATOR_VERSION.nupkg \
+    && curl -SL --output dotnet-reportgenerator-globaltool.$DOTNET_REPORTGENERATOR_VERSION.nupkg https://globalcdn.nuget.org/packages/dotnet-reportgenerator-globaltool.$DOTNET_REPORTGENERATOR_VERSION.nupkg \
     && reportgenerator_sha512='a888c246df99e56e60bb460dcf27e1ef37865f4d0b5524a6edf297cee44ec65d22e87a519095cdb59ec1f012d8c43d6c2794a86b2b0b7a0b2126e13abe17c058' \
     && echo "$reportgenerator_sha512  dotnet-reportgenerator-globaltool.$DOTNET_REPORTGENERATOR_VERSION.nupkg" | sha512sum -c - \
     && mkdir -p /usr/share/dotnet-reportgenerator-globaltool \
