@@ -34,10 +34,9 @@ RUN ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
   && chmod 755 /usr/share/powershell/pwsh \
   && ln -s /usr/share/minver-cli/minver /usr/bin/minver \
   && chmod 755 /usr/share/minver-cli/minver \
+  # Install module Pester - for root user
+  && pwsh -Command "Install-Module -Name Pester -Scope AllUsers -Force" \
   && dotnet nuget locals all --clear
-
-# Install module Pester - for root user
-RUN pwsh -Command "Install-Module -Name Pester -Scope AllUsers -Force"
 
 USER buildagent
 
