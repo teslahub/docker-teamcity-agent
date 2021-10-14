@@ -24,9 +24,12 @@ if [[ -n "${MINVER_IMAGE}" ]]; then
 fi
 
 if [[ "${SOURCE_BRANCH}" -eq "main" ]]; then
+  unset IMAGE_LATEST
+  unset IMAGE_NAME3
   echo "-- Commit: ${IMAGE_NAME1}"
   DOCKER_BUID="$DOCKER_BUID  -t $IMAGE_NAME1"
 else
+  unset IMAGE_NAME1
   echo "-- Latest: ${IMAGE_LATEST}"
   DOCKER_BUID="$DOCKER_BUID  -t $IMAGE_LATEST"
   
@@ -39,6 +42,7 @@ else
     DOCKER_BUID="$DOCKER_BUID -t $IMAGE_NAME3"
   fi
 fi
+
 echo "Docker build=> ${DOCKER_BUID}"
 eval $DOCKER_BUID
 
@@ -47,6 +51,11 @@ if [[ ${ret_val} -eq 0 ]]; then
   if [[ -n "${IMAGE_NAME1}" ]]; then
     echo "Pushing=> ${IMAGE_NAME1}"
     docker push ${IMAGE_NAME1}
+  fi
+
+  if [[ -n "${IMAGE_LATEST}" ]]; then
+    echo "Pushing=> ${IMAGE_LATEST}"
+    docker push ${IMAGE_LATEST}
   fi
 
   if [[ -n "${IMAGE_NAME2}" ]]; then
