@@ -1,0 +1,63 @@
+#!/bin/bash
+
+IMAGE_NAME1="${DOCKER_REPO}:${SOURCE_COMMIT:0:7}"
+IMAGE_LATEST="${DOCKER_REPO}:latest"
+
+cat <<EOF
+Current Dir: ${PWD}
+SOURCE_BRANCH: ${SOURCE_BRANCH}
+SOURCE_COMMIT: ${SOURCE_COMMIT}
+COMMIT_MSG: ${COMMIT_MSG}
+DOCKER_REPO: ${DOCKER_REPO}
+DOCKERFILE_PATH: ${DOCKERFILE_PATH}
+DOCKER_TAG: ${DOCKER_TAG}
+IMAGE_NAME: ${IMAGE_NAME}
+IMAGE_LATEST: ${IMAGE_LATEST}
+IMAGE_NAME1: ${IMAGE_NAME1}
+EOF
+
+DOCKER_BUID="DOCKER_BUILDKIT=1 docker build . -f $DOCKERFILE_PATH -t $IMAGE_NAME"
+
+if [[ -n "${MINVER_IMAGE}" ]]; then
+  echo "-- MINVER: ${MINVER_IMAGE}"
+  DOCKER_BUID="$DOCKER_BUID --build-arg MINVER_IMAGE=$MINVER_IMAGE"
+fi
+
+if [[ "${SOURCE_BRANCH}" -eq "main" ]]; then
+  echo "-- Commit: ${IMAGE_NAME1}"
+  DOCKER_BUID="$DOCKER_BUID  -t $IMAGE_NAME1"
+else
+  echo "-- Latest: ${IMAGE_LATEST}"
+  DOCKER_BUID="$DOCKER_BUID  -t $IMAGE_LATEST"
+  
+  if [[ -n "${REPO2}" ]]; then
+    IMAGE_NAME2="${REPO2}:${DOCKER_TAG}"
+    DOCKER_BUID="$DOCKER_BUID -t $IMAGE_NAME2"
+  fi
+  
+  if [[ -n "${IMAGE_NAME3}" ]]; then
+    DOCKER_BUID="$DOCKER_BUID -t $IMAGE_NAME3"
+  fi
+fi
+echo "Docker build=> ${DOCKER_BUID}"
+eval $DOCKER_BUID
+
+ret_val=$?
+if [[ ${ret_val} -eq 0 ]]; then
+  if [[ -n "${IMAGE_NAME1}" ]]; then
+    echo "Pushing=> ${IMAGE_NAME1}"
+    docker push ${IMAGE_NAME1}
+  fi
+
+  if [[ -n "${IMAGE_NAME2}" ]]; then
+    echo "Pushing=> ${IMAGE_NAME2}"
+    docker push ${IMAGE_NAME2}
+  fi
+
+  if [[ -n "${IMAGE_NAME3}" ]]; then
+    echo "Pushing=> ${IMAGE_NAME3}"
+    docker push ${IMAGE_NAME3}
+  fi
+else
+  exit ret_val
+fi
