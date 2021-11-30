@@ -4,7 +4,7 @@ ARG MINVER_IMAGE=teslaconsulting/minver-cli:$MINVER_IMAGE_TAG
 
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION5}-focal AS dotnetsdk5
 FROM $MINVER_IMAGE AS minver
-FROM jetbrains/teamcity-agent:2021.1-linux AS final
+FROM jetbrains/teamcity-agent:2021.1.1-linux AS final
 
 USER root
 
