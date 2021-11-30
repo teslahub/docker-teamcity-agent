@@ -1,20 +1,20 @@
-FROM jetbrains/teamcity-agent:2019.1
+FROM jetbrains/teamcity-agent:2019.1.1
 
 # Cleanup previous sdk 2.2.103
 RUN rm /usr/bin/dotnet && rm -rf /usr/share/dotnet
 
 # from 3.0 bionic; https://github.com/dotnet/dotnet-docker/blob/master/3.0/sdk/bionic/amd64/Dockerfile
-# jetbrains/teamcity-agent:2019.1 already have this below
-# RUN apt-get update \
-#     && apt-get install -y --no-install-recommends \
-#         libc6 \
-#         libgcc1 \
-#         libgssapi-krb5-2 \
-#         libicu60 \
-#         libssl1.1 \
-#         libstdc++6 \
-#         zlib1g \
-#     && rm -rf /var/lib/apt/lists/*
+# jetbrains/teamcity-agent:2019.1.1 already have this below
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libc6 \
+        libgcc1 \
+        libgssapi-krb5-2 \
+        libicu60 \
+        libssl1.1 \
+        libstdc++6 \
+        zlib1g \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install multi .NET Core SDK
 ENV DOTNET_SDK_VERSION21=2.1.700 \
@@ -70,9 +70,9 @@ RUN curl -SL --output PowerShell.Linux.x64.$POWERSHELL_VERSION.nupkg https://pws
 
 # Install Coverlet Console global tool
 # Install SonarScanner for .Net Core 2.1 global tool
-ENV DOTNET_COVERLET_VERSION=1.5.1 \
+ENV DOTNET_COVERLET_VERSION=1.5.3 \
     DOTNET_SONARSCANNER_VERSION=4.6.2 \
-    DOTNET_REPORTGENERATOR_VERSION=4.2.2 \
+    DOTNET_REPORTGENERATOR_VERSION=4.2.9 \
     PATH="$PATH:/root/.dotnet/tools"
 
 RUN dotnet tool install --global coverlet.console --version $DOTNET_COVERLET_VERSION \
