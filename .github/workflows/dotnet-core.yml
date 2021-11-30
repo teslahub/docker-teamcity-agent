@@ -23,6 +23,7 @@ jobs:
         with:
           images: |
             ${{ secrets.DOCKER_HUB_REPOS }}
+            teslaconsulting/teamcity-agent
           tags: |
             type=ref,event=branch,priority=600
             type=sha,enable=true,priority=500,prefix=sha-,suffix=,format=short
