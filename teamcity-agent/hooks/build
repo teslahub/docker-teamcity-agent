@@ -1,16 +1,72 @@
 #!/bin/bash
 
-echo "Current Dir: $(pwd)"
-echo "SOURCE_BRANCH: ${SOURCE_BRANCH}"
-echo "SOURCE_COMMIT: ${SOURCE_COMMIT}"
-echo "COMMIT_MSG: ${COMMIT_MSG}"
-echo "DOCKER_REPO: ${DOCKER_REPO}"
-echo "DOCKERFILE_PATH: ${DOCKERFILE_PATH}"
-echo "DOCKER_TAG: ${DOCKER_TAG}"
-echo "IMAGE_NAME: ${IMAGE_NAME}"
+IMAGE_NAME1="${DOCKER_REPO}:${SOURCE_COMMIT:0:7}"
+IMAGE_LATEST="${DOCKER_REPO}:latest"
 
-if [[ -z "${MINVER_IMAGE}" ]]; then
-  docker build -f $DOCKERFILE_PATH -t $IMAGE_NAME .
+cat <<EOF
+Current Dir: ${PWD}
+SOURCE_BRANCH: ${SOURCE_BRANCH}
+SOURCE_COMMIT: ${SOURCE_COMMIT}
+COMMIT_MSG: ${COMMIT_MSG}
+DOCKER_REPO: ${DOCKER_REPO}
+DOCKERFILE_PATH: ${DOCKERFILE_PATH}
+DOCKER_TAG: ${DOCKER_TAG}
+IMAGE_NAME: ${IMAGE_NAME}
+IMAGE_LATEST: ${IMAGE_LATEST}
+IMAGE_NAME1: ${IMAGE_NAME1}
+EOF
+
+DOCKER_BUID="DOCKER_BUILDKIT=1 docker build . -f $DOCKERFILE_PATH -t $IMAGE_NAME"
+
+if [[ -n "${MINVER_IMAGE}" ]]; then
+  echo "-- MINVER: ${MINVER_IMAGE}"
+  DOCKER_BUID="$DOCKER_BUID --build-arg MINVER_IMAGE=$MINVER_IMAGE"
+fi
+
+if [[ "${SOURCE_BRANCH}" -eq "main" ]]; then
+  unset IMAGE_LATEST
+  unset IMAGE_NAME3
+  echo "-- Commit: ${IMAGE_NAME1}"
+  DOCKER_BUID="$DOCKER_BUID  -t $IMAGE_NAME1"
 else
-  docker build -f $DOCKERFILE_PATH -t $IMAGE_NAME --build-arg MINVER_IMAGE=$MINVER_IMAGE .
+  unset IMAGE_NAME1
+  echo "-- Latest: ${IMAGE_LATEST}"
+  DOCKER_BUID="$DOCKER_BUID  -t $IMAGE_LATEST"
+  
+  if [[ -n "${REPO2}" ]]; then
+    IMAGE_NAME2="${REPO2}:${DOCKER_TAG}"
+    DOCKER_BUID="$DOCKER_BUID -t $IMAGE_NAME2"
+  fi
+  
+  if [[ -n "${IMAGE_NAME3}" ]]; then
+    DOCKER_BUID="$DOCKER_BUID -t $IMAGE_NAME3"
+  fi
+fi
+
+echo "Docker build=> ${DOCKER_BUID}"
+eval $DOCKER_BUID
+
+ret_val=$?
+if [[ ${ret_val} -eq 0 ]]; then
+  if [[ -n "${IMAGE_NAME1}" ]]; then
+    echo "Pushing=> ${IMAGE_NAME1}"
+    docker push ${IMAGE_NAME1}
+  fi
+
+  if [[ -n "${IMAGE_LATEST}" ]]; then
+    echo "Pushing=> ${IMAGE_LATEST}"
+    docker push ${IMAGE_LATEST}
+  fi
+
+  if [[ -n "${IMAGE_NAME2}" ]]; then
+    echo "Pushing=> ${IMAGE_NAME2}"
+    docker push ${IMAGE_NAME2}
+  fi
+
+  if [[ -n "${IMAGE_NAME3}" ]]; then
+    echo "Pushing=> ${IMAGE_NAME3}"
+    docker push ${IMAGE_NAME3}
+  fi
+else
+  exit ret_val
 fi
