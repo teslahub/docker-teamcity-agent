@@ -24,7 +24,7 @@ jobs:
           images: |
             ${{ secrets.DOCKER_HUB_REPOS }}
           tags: |
-            type=ref,event=branch
+            type=ref,event=branch,priority=600
             type=sha,enable=true,priority=500,prefix=sha-,suffix=,format=short
             type=match,enable=true,priority=900,prefix=,suffix=,pattern=^(\d.\d(.\d)?(-.+)?)$,group=1
             type=match,enable=true,priority=880,prefix=,suffix=,pattern=^(\d.\d(.\d))?(-.+)?$,group=1
