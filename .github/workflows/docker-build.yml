@@ -3,7 +3,7 @@ name: Build teamcity-agent docker
 on:
   push:
     branches: ["main", "dev*"]
-    tags: ["*.*.*", "*.*"]
+    tags: ["*.*.*", "*.*", "!minver-*.*.*", "!minver-*.*"]
   pull_request:
     branches: [main]
 
