@@ -1,10 +1,12 @@
-FROM mcr.microsoft.com/dotnet/sdk:3.1
+FROM mcr.microsoft.com/dotnet/sdk:6.0
 
 # Install minver Console global tool
-ENV DOTNET_MINVER_VERSION=2.5.0
+ARG DOTNET_MINVER_VERSION=3.0.0-rc.1
+ENV DOTNET_MINVER_VERSION=${DOTNET_MINVER_VERSION}
 
 RUN curl -SL --output minver-cli.$DOTNET_MINVER_VERSION.nupkg https://globalcdn.nuget.org/packages/minver-cli.$DOTNET_MINVER_VERSION.nupkg \
-  && minver_cli_sha512='ce186951a4296e10a82cf40aed53577b19fa63ed22fda5f239e5504d6f6a519e22f94619a6c5be0aeb319af67baf7f43426f60046fdc3ed014d7b46e25b611e4' \
+  && minver_cli_sha512='cd3740d459d2d6b2f049a1b201ed204dfc66ea73acdd21a7fd30bfaebf0158f61c6fdf67e839eba488c53d01990c58fae1c949ee4fc9a25edfeef29b45e1bbbd' \
+  && echo "Echo hash: $(sha512sum minver-cli.$DOTNET_MINVER_VERSION.nupkg)" \
   && echo "$minver_cli_sha512  minver-cli.$DOTNET_MINVER_VERSION.nupkg" | sha512sum -c - \
   && mkdir -p /usr/share/minver-cli \
   && dotnet tool install --add-source / --tool-path /usr/share/minver-cli --version $DOTNET_MINVER_VERSION minver-cli \
