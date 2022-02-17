@@ -3,7 +3,7 @@ ARG DOTNET_SDK_VERSION5=5.0.405
 ARG DOTNET_SDK_VERSION6=6.0.102
 ARG MINVER_IMAGE_TAG=3.0.0-rc.1
 ARG MINVER_IMAGE=teslaconsulting/minver-cli:$MINVER_IMAGE_TAG
-ARG TEAMCITYAGENT_IMAGE_TAG=2021.2.2-linux
+ARG TEAMCITYAGENT_IMAGE_TAG=2021.2.3-linux
 
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION6}-focal AS dotnetsdk6
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION5}-focal AS dotnetsdk5

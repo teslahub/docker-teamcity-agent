@@ -10,7 +10,7 @@ https://hub.docker.com/r/teslaconsulting/teamcity-agent
 
 Update per build.
 
-- Latest tag: `2021.2.2-linux`
+- Latest tag: `2021.2.3-linux`
 - .NET 6 SDK: 6.0.102
 - .NET 6 and ASP.NETCore 6: 6.0.2
 - .NET 5 SDK: 5.0.405
