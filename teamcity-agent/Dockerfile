@@ -3,7 +3,8 @@ ARG DOTNET_SDK_VERSION5=5.0.405
 ARG DOTNET_SDK_VERSION6=6.0.102
 ARG MINVER_IMAGE_TAG=3.1.0
 ARG MINVER_IMAGE=teslaconsulting/minver-cli:$MINVER_IMAGE_TAG
-ARG TEAMCITYAGENT_IMAGE_TAG=2021.2.3-linux
+ARG TEAMCITYAGENT_IMAGE_REPOS=jetbrains/teamcity-agent
+ARG TEAMCITYAGENT_IMAGE_TAG=2022.04-linux
 
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION6}-focal AS dotnetsdk6
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION5}-focal AS dotnetsdk5
@@ -18,7 +19,7 @@ COPY --from=dotnetsdk6 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk6 /usr/share/powershell /usr/share/powershell
 COPY --from=minver /usr/share/minver-cli /usr/share/minver-cli
 
-FROM jetbrains/teamcity-agent:${TEAMCITYAGENT_IMAGE_TAG} AS final
+FROM ${TEAMCITYAGENT_IMAGE_REPOS}:${TEAMCITYAGENT_IMAGE_TAG} AS final
 
 USER root
 
