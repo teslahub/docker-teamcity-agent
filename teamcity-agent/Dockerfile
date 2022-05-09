@@ -11,7 +11,6 @@ FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION6}-focal AS dotnetsdk6
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION5}-focal AS dotnetsdk5
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION31}-focal AS dotnetsdk3
 FROM $MINVER_IMAGE AS minver
-FROM docker/compose:$DOCKER_COMPOSE_VERSION AS dockercompose
 
 FROM scratch AS build
 # make sure folder exist
@@ -22,7 +21,8 @@ COPY --from=dotnetsdk5 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk6 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk6 /usr/share/powershell /usr/share/powershell
 COPY --from=minver /usr/share/minver-cli /usr/share/minver-cli
-COPY --from=dockercompose /usr/local/bin/docker-compose /usr/local/bin/docker-compose
+RUN curl -L --fail https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/run.sh -o /usr/local/bin/docker-compose && \
+  chmod +x /usr/local/bin/docker-compose
 
 FROM ${TEAMCITYAGENT_IMAGE_REPOS}:${TEAMCITYAGENT_IMAGE_TAG} AS final
 
@@ -55,6 +55,7 @@ RUN ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
   && chmod 755 /usr/share/powershell/pwsh \
   && ln -s /usr/share/minver-cli/minver /usr/bin/minver \
   && chmod 755 /usr/share/minver-cli/minver \
+  && chmod 755 /usr/local/bin/docker-compose \
   # Install module Pester - for root user
   && pwsh -Command "Install-Module -Name Pester -Scope AllUsers -Force" \
   && dotnet nuget locals all --clear
