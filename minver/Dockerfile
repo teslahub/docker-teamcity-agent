@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0
 
 # Install minver Console global tool
-ARG DOTNET_MINVER_VERSION=4.0.0
+ARG DOTNET_MINVER_VERSION=4.1.0
 ENV DOTNET_MINVER_VERSION=${DOTNET_MINVER_VERSION}
 
 RUN curl -SL --output minver-cli.$DOTNET_MINVER_VERSION.nupkg https://globalcdn.nuget.org/packages/minver-cli.$DOTNET_MINVER_VERSION.nupkg \
