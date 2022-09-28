@@ -44,7 +44,7 @@ jobs:
       - name: Get Docker Compose version
         id: docker_compose_version
         run: |
-          DOCKER_COMPOSE_VERSION=$(docker run -it --rm docker:cli docker compose version)
+          DOCKER_COMPOSE_VERSION=$(docker run --rm docker:cli docker compose version)
           echo "Docker compose version raw: $DOCKER_COMPOSE_VERSION"
           DOCKER_COMPOSE_VERSION=${DOCKER_COMPOSE_VERSION#Docker Compose version v}
           echo "Docker compose version only: '$DOCKER_COMPOSE_VERSION'"
