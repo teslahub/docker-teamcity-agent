@@ -1,4 +1,4 @@
-name: Build minver-cli docker
+name: Build minver-cli image
 
 on:
   push:

@@ -1,4 +1,4 @@
-name: Build teamcity-agent docker
+name: Build teamcity-agent image
 
 on:
   push:
