@@ -19,3 +19,4 @@ Update per build.
 - .NET 3.1 and ASP.NETCore 3.1: 3.1.29
 - Powershell Core: 7.2.6
 - MinVer Cli: 4.2.0
+- Docker Compose v2: 2.11.2
