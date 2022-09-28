@@ -18,20 +18,30 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Docker Repos Selection
+        id: repos
+        shell: pwsh
+        run: |
+          $repos='${{ secrets.DOCKER_HUB_REPOS }}'.Trim()
+          if ($Env:GITHUB_REF_NAME -match '^(\d+\.\d+(\.\d+)?(-.+)?)$') {
+            $repos+='%0A'
+            $repos+='teslaconsulting/teamcity-agent'
+          }
+          Write-Output "::set-output name=content::$repos"
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v3
         with:
           images: |
-            ${{ secrets.DOCKER_HUB_REPOS }}
-            teslaconsulting/teamcity-agent
+            ${{ steps.repos.outputs.content }}
           tags: |
-            type=ref,event=branch,priority=600
-            type=sha,enable=true,priority=500,prefix=sha-,suffix=,format=short
             type=match,enable=true,priority=900,prefix=,suffix=,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
-            type=match,enable=true,priority=880,prefix=,suffix=,pattern=^(\d+\.\d+(\.\d+))?(-.+)?$,group=1
-            type=match,enable=true,priority=870,prefix=,suffix=,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
-            type=match,enable=true,priority=860,prefix=,suffix=,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=match,enable=true,priority=890,prefix=,suffix=,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=true,priority=880,prefix=,suffix=,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=true,priority=870,prefix=,suffix=,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=ref,enable=true,priority=600,event=branch
+            type=sha,enable=true,priority=500,prefix=sha-,suffix=,format=short
       # - name: Set up QEMU
       #   uses: docker/setup-qemu-action@v1
 
