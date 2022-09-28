@@ -41,6 +41,15 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Get MinVer version
+        id: minver_version
+        shell: pwsh
+        run: |
+          $minver_help=$(docker run --rm teslaconsulting/minver-cli:latest minver --help)
+          echo "Minver help:`n$minver_help"
+          $minver_version=($minver_help -split '\n')[0] -Replace '^[^0-9]+([0-9.]+)[^0-9].*$','$1'
+          echo "Minver version: $minver_version"
+          echo "::set-output name=version::$minver_version"
       - name: Get Docker Compose version
         id: docker_compose_version
         run: |
@@ -58,6 +67,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
+            MINVER_VERSION=${{ steps.minver_version.outputs.version }}
             DOCKER_COMPOSE_VERSION=${{ steps.docker_compose_version.outputs.version }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
