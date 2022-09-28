@@ -18,4 +18,4 @@ Update per build.
 - .NETCore 3.1 SDK: 3.1.421
 - .NET 3.1 and ASP.NETCore 3.1: 3.1.27
 - Powershell Core: 7.2.5
-- MinVer Cli: 4.1.0
+- MinVer Cli: 4.2.0
