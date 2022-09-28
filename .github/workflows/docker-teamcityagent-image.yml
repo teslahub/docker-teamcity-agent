@@ -57,7 +57,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args:
-            DOCKER_COMPOSE_VERSION: ${{ steps.docker_compose_version.outputs.version }}
+          build-args: |
+            DOCKER_COMPOSE_VERSION=${{ steps.docker_compose_version.outputs.version }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
