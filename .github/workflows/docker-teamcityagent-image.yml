@@ -34,7 +34,6 @@ jobs:
       # - name: Set up QEMU
       #   uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
-        id: buildx
         uses: docker/setup-buildx-action@v1
       - name: Login to Docker Hub
         if: github.event_name != 'pull_request'
@@ -42,6 +41,14 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Get Docker Compose version
+        id: docker_compose_version
+        run: |
+          DOCKER_COMPOSE_VERSION=$(docker run -it --rm docker:cli docker compose version)
+          echo "Docker compose version raw: $DOCKER_COMPOSE_VERSION"
+          DOCKER_COMPOSE_VERSION=${DOCKER_COMPOSE_VERSION#Docker Compose version v}
+          echo "Docker compose version only: '$DOCKER_COMPOSE_VERSION'"
+          echo "::set-output name=version::$DOCKER_COMPOSE_VERSION"
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
@@ -50,5 +57,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args:
+            DOCKER_COMPOSE_VERSION: ${{ steps.docker_compose_version.outputs.version }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
