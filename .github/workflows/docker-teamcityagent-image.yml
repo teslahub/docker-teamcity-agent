@@ -47,7 +47,7 @@ jobs:
         run: |
           $minver_help=$(docker run --rm teslaconsulting/minver-cli:latest minver --help)
           echo "Minver help:`n$minver_help"
-          $minver_version=($minver_help -split '\n')[0] -Replace '^[^0-9]+([0-9.]+)[^0-9].*$','$1'
+          $minver_version=$minver_help[0] -Replace '^[^0-9]+([0-9.]+)[^0-9].*$','$1'
           echo "Minver version: $minver_version"
           echo "::set-output name=version::$minver_version"
       - name: Get Docker Compose version
