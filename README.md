@@ -1,12 +1,14 @@
-# Docker teamcity-agent
+# Docker teamcity-agent with multi .NET SDKs
 
-Clone from Teamcity Agent image, add more tooks and .NET SDK
+Customized Teamcity Agent image Ubuntu 20.04, add more tooks and .NET SDK
 
-### Docker Hub
+## Docker Hub and Dockerfile
 
 https://hub.docker.com/r/teslaconsulting/teamcity-agent
 
-### Current version adding tools and SDK
+[Dockerfile](https://github.com/teslahub/docker-teamcity-agent/blob/main/teamcity-agent/Dockerfile) on Github https://github.com/teslahub/docker-teamcity-agent
+
+## Current version adding tools and SDKs
 
 Update per build.
 
