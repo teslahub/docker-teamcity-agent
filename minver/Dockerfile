@@ -14,4 +14,5 @@ RUN curl -SL --output minver-cli.$DOTNET_MINVER_VERSION.nupkg https://globalcdn.
   && ln -s /usr/share/minver-cli/minver /usr/bin/minver \
   && chmod 755 /usr/share/minver-cli/minver \
   && find /usr/share/minver-cli -print | grep -i '.*[.]nupkg$' | xargs rm \
-  && dotnet nuget locals all --clear
+  && dotnet nuget locals all --clear \
+  && minver --help
