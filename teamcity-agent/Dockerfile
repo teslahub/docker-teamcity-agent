@@ -11,7 +11,7 @@ FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION6_TAG} AS dotnetsdk6
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION5_TAG} AS dotnetsdk5
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION31_TAG} AS dotnetsdk3
 FROM $MINVER_IMAGE AS minver
-FROM $DOCKER_CLI_IMAGE AS dockercli
+# FROM $DOCKER_CLI_IMAGE AS dockercli -> use apt-get install docker-compose-plugin
 
 FROM scratch AS build
 # make sure folder exist
@@ -22,7 +22,7 @@ COPY --from=dotnetsdk5 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk6 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk6 /usr/share/powershell /usr/share/powershell
 COPY --from=minver /usr/share/minver-cli /usr/share/minver-cli
-COPY --from=dockercli /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
+# COPY --from=dockercli /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
 
 FROM ${TEAMCITYAGENT_IMAGE_REPOS}:${TEAMCITYAGENT_IMAGE_TAG} AS final
 
@@ -68,16 +68,21 @@ ENV DOTNET_SDK_VERSION31=${DOTNET_SDK_VERSION31} \
 
 COPY --from=build /usr /usr
 
-RUN ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
+RUN apt-get update \
+  && apt-get install docker-compose-plugin -y \
+  && apt-get upgrade -y \
+  && ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
   && chmod 755 /usr/share/powershell/pwsh \
   && ln -s /usr/share/minver-cli/minver /usr/bin/minver \
   && chmod +x /usr/share/minver-cli/minver \
   && [ -e /usr/local/bin/docker-compose ] && rm /usr/local/bin/docker-compose \
-  && ln -s /usr/local/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose \
+  && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose \
   && chmod +x /usr/libexec/docker/cli-plugins/docker-* \
   # Install module Pester - for root user
   && pwsh -Command "Install-Module -Name Pester -Scope AllUsers -Force" \
-  && dotnet nuget locals all --clear
+  && dotnet nuget locals all --clear \
+  && apt-get clean \
+  && rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
 
 USER buildagent
 
