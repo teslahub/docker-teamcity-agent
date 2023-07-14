@@ -121,11 +121,12 @@ jobs:
         id: dotnet8_vers
         shell: pwsh
         run: |
-          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:8.0-preview-jammy sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
+          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:8.0-preview-jammy sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version')
           Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
           Write-Output "::set-output name=sdk::$($dotnet_vers[0])"
           Write-Output "::set-output name=aspnet::$($dotnet_vers[1])"
           Write-Output "::set-output name=dotnet::$($dotnet_vers[2])"
+          Write-Output "::set-output name=pwsh::$($dotnet_vers[3].SubString(11))"
 
       - name: Build and push
         id: docker_build
@@ -153,5 +154,6 @@ jobs:
             DOTNET_SDK_VERSION8=${{ steps.dotnet8_vers.outputs.sdk }}
             ASPNET_VERSION8=${{ steps.dotnet8_vers.outputs.aspnet }}
             DOTNET_VERSION8=${{ steps.dotnet8_vers.outputs.dotnet }}
+            POWERSHELL_VERSION=${{ steps.dotnet8_vers.outputs.pwsh }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
