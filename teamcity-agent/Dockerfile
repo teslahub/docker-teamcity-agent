@@ -72,7 +72,7 @@ RUN ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
   && chmod 755 /usr/share/powershell/pwsh \
   && ln -s /usr/share/minver-cli/minver /usr/bin/minver \
   && chmod +x /usr/share/minver-cli/minver \
-  && rm /usr/local/bin/docker-compose \
+  && [ -e /usr/local/bin/docker-compose ] && rm /usr/local/bin/docker-compose \
   && ln -s /usr/local/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose \
   && chmod +x /usr/libexec/docker/cli-plugins/docker-* \
   # Install module Pester - for root user
