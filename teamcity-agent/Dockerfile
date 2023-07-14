@@ -22,7 +22,7 @@ COPY --from=dotnetsdk5 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk6 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk6 /usr/share/powershell /usr/share/powershell
 COPY --from=minver /usr/share/minver-cli /usr/share/minver-cli
-COPY --from=dockercli /usr/libexec/docker/cli-plugins /usr/libexec/docker/cli-plugins
+COPY --from=dockercli /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
 
 FROM ${TEAMCITYAGENT_IMAGE_REPOS}:${TEAMCITYAGENT_IMAGE_TAG} AS final
 
@@ -73,7 +73,7 @@ RUN ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
   && ln -s /usr/share/minver-cli/minver /usr/bin/minver \
   && chmod +x /usr/share/minver-cli/minver \
   && rm /usr/local/bin/docker-compose \
-  && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose \
+  && ln -s /usr/local/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose \
   && chmod +x /usr/libexec/docker/cli-plugins/docker-* \
   # Install module Pester - for root user
   && pwsh -Command "Install-Module -Name Pester -Scope AllUsers -Force" \
