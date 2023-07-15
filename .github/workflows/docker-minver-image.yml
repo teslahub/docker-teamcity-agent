@@ -27,7 +27,7 @@ jobs:
             $repos+='%0A'
             $repos+='teslaconsulting/minver-cli'
           }
-          Write-Output "::set-output name=content::$repos"
+          Write-Output "content=$repos" >> $env:GITHUB_OUTPUT
 
       - name: Docker meta
         id: meta
