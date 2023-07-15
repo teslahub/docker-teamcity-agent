@@ -25,7 +25,7 @@ jobs:
       - name: Check Tag Ref
         shell: pwsh
         run: |
-          $isTag=${{ startsWith(github.ref, 'refs/tags/') }}
+          $isTag='${{ startsWith(github.ref, 'refs/tags/') }}'
           Write-Output "IS_TAG=$isTag" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
           if ($true -eq $isTag) {
             if ($Env:GITHUB_REF_NAME -match '^(\d+\.\d+(\.\d+)?(-.+)?)$') {
