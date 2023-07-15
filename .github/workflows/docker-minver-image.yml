@@ -27,7 +27,7 @@ jobs:
             $repos+='%0A'
             $repos+='teslaconsulting/minver-cli'
           }
-          if (-Or $Env:GITHUB_REF_NAME -eq 'dev4') {
+          if ($Env:GITHUB_REF_NAME -eq 'dev4') {
             $repos+='%0A'
             $repos+='thoho/minver-cli-test'
           }
