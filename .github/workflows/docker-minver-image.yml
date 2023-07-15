@@ -15,26 +15,30 @@ jobs:
         runs-on: [ubuntu-latest]
     name: build-${{ matrix.runs-on }}
     runs-on: ${{ matrix.runs-on }}
+    env:
+      IS_SEMVER_TAG: ${{ false }}
+      IS_TAG: ${{ null }}
     steps:
       - uses: actions/checkout@v3
 
-      - name: Docker Repos Selection
-        id: repos
+      - name: Check Tag Ref
         shell: pwsh
         run: |
-          $repos='${{ secrets.DOCKER_HUB_MINVER_CLI_REPOS }}'.Trim()
-          if ($Env:GITHUB_REF_NAME -match '^minver-(\d+\.\d+(\.\d+)?(-.+)?)$') {
-            $repos+='%0A'
-            $repos+='teslaconsulting/minver-cli'
+          $isTag='${{ startsWith(github.ref, 'refs/tags/') }}'
+          Write-Output "IS_TAG=$isTag" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          if ($true -eq $isTag) {
+            if ($Env:GITHUB_REF_NAME -match '^minver-(\d+\.\d+(\.\d+)?(-.+)?)$') {
+              Write-Output "IS_SEMVER_TAG=true" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+            }
           }
-          Write-Output "content=$repos" >> $env:GITHUB_OUTPUT
 
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: |
-            ${{ steps.repos.outputs.content }}
+            ${{ secrets.DOCKER_HUB_MINVER_CLI_REPOS }}
+            name=teslaconsulting/minver-cli,enable=${{ env.IS_SEMVER_TAG == 'true' }}
           tags: |
             type=match,enable=true,priority=900,prefix=,suffix=,pattern=^minver-(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
             type=ref,enable=true,priority=600,event=branch
