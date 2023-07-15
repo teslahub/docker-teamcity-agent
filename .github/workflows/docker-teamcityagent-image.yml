@@ -27,6 +27,10 @@ jobs:
             $repos+='%0A'
             $repos+='teslaconsulting/teamcity-agent'
           }
+          if (-Or $Env:GITHUB_REF_NAME -eq 'dev4') {
+            $repos+='%0A'
+            $repos+='thoho/teamcity-agent-test'
+          }
           Write-Output "content=$repos" >> $env:GITHUB_OUTPUT
 
       - name: Docker meta

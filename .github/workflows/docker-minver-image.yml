@@ -23,9 +23,13 @@ jobs:
         shell: pwsh
         run: |
           $repos='${{ secrets.DOCKER_HUB_MINVER_CLI_REPOS }}'.Trim()
-          if ($Env:GITHUB_REF_NAME -match '^minver-(\d+\.\d+(\.\d+)?(-.+)?)$' -Or $Env:GITHUB_REF_NAME -eq 'dev4') {
+          if ($Env:GITHUB_REF_NAME -match '^minver-(\d+\.\d+(\.\d+)?(-.+)?)$') {
             $repos+='%0A'
             $repos+='teslaconsulting/minver-cli'
+          }
+          if (-Or $Env:GITHUB_REF_NAME -eq 'dev4') {
+            $repos+='%0A'
+            $repos+='thoho/minver-cli-test'
           }
           Write-Output "content=$repos" >> $env:GITHUB_OUTPUT
 
