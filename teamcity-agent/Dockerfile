@@ -7,7 +7,7 @@ ARG MINVER_IMAGE_TAG=latest
 ARG MINVER_IMAGE=teslaconsulting/minver-cli:$MINVER_IMAGE_TAG
 ARG DOCKER_CLI_IMAGE=docker:cli
 ARG TEAMCITYAGENT_IMAGE_REPOS=jetbrains/teamcity-agent
-ARG TEAMCITYAGENT_IMAGE_TAG=2022.04.5-linux
+ARG TEAMCITYAGENT_IMAGE_TAG=2022.10.4-linux
 
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION8_TAG} AS dotnetsdk8
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION7_TAG} AS dotnetsdk7
