@@ -2,10 +2,10 @@ name: Build minver-cli image
 
 on:
   push:
-    branches: ["main", "dev*"]
+    branches: [minver, "minver/dev*"]
     tags: ["minver-*.*.*", "minver-*.*"]
   pull_request:
-    branches: [main]
+    branches: [minver]
 
 jobs:
   docker:
