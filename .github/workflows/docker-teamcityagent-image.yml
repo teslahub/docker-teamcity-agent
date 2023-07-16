@@ -2,10 +2,10 @@ name: Build teamcity-agent image
 
 on:
   push:
-    branches: ["main", "dev*"]
+    branches: ["release/*", "dev*"]
     tags: ["*.*.*", "*.*", "!minver-*.*.*", "!minver-*.*"]
   pull_request:
-    branches: [main]
+    branches: ["release/*"]
 
 jobs:
   docker:
