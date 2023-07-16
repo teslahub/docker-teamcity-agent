@@ -45,7 +45,7 @@ jobs:
             type=match,enable=true,priority=900,prefix=,suffix=,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
             type=match,enable=true,priority=890,prefix=,suffix=,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
             type=match,enable=true,priority=880,prefix=,suffix=,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
-            type=match,enable=true,priority=870,prefix=,suffix=,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=match,enable=false,priority=870,prefix=,suffix=,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
             type=ref,enable=true,priority=600,event=branch
             type=sha,enable=true,priority=500,prefix=sha-,suffix=,format=short
       # - name: Set up QEMU
