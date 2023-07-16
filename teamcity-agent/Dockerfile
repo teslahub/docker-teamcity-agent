@@ -7,7 +7,7 @@ ARG MINVER_IMAGE_TAG=latest
 ARG MINVER_IMAGE=teslaconsulting/minver-cli:$MINVER_IMAGE_TAG
 ARG DOCKER_CLI_IMAGE=docker:cli
 ARG TEAMCITYAGENT_IMAGE_REPOS=jetbrains/teamcity-agent
-ARG TEAMCITYAGENT_IMAGE_TAG=2022.04.4-linux
+ARG TEAMCITYAGENT_IMAGE_TAG=2022.04.5-linux
 
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION8_TAG} AS dotnetsdk8
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION7_TAG} AS dotnetsdk7
@@ -15,7 +15,7 @@ FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION6_TAG} AS dotnetsdk6
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION5_TAG} AS dotnetsdk5
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION31_TAG} AS dotnetsdk3
 FROM $MINVER_IMAGE AS minver
-# FROM $DOCKER_CLI_IMAGE AS dockercli -> use apt-get install docker-compose-plugin
+FROM $DOCKER_CLI_IMAGE AS dockercli
 
 FROM scratch AS build
 # make sure folder exist
@@ -28,7 +28,7 @@ COPY --from=dotnetsdk7 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk8 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk8 /usr/share/powershell /usr/share/powershell
 COPY --from=minver /usr/share/minver-cli /usr/share/minver-cli
-# COPY --from=dockercli /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
+COPY --from=dockercli /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
 
 FROM ${TEAMCITYAGENT_IMAGE_REPOS}:${TEAMCITYAGENT_IMAGE_TAG} AS final
 
@@ -55,8 +55,8 @@ ARG ASPNET_VERSION8=8.0.0
 ARG DOTNET_VERSION8=8.0.0
 
 ARG POWERSHELL_VERSION=7.2.6
-ARG MINVER_VERSION=4.2.0
-ARG DOCKER_COMPOSE_VERSION=2.11.2
+ARG MINVER_VERSION=4.3.0
+ARG DOCKER_COMPOSE_VERSION=2.20.0
 # Install PowerShell global tool
 # Install minver Console global tool
 ENV DOTNET_SDK_VERSION31=${DOTNET_SDK_VERSION31} \
@@ -91,14 +91,14 @@ ENV DOTNET_SDK_VERSION31=${DOTNET_SDK_VERSION31} \
 COPY --from=build /usr /usr
 
 RUN apt-get update \
-  && apt-get install docker-compose-plugin -y \
+  # && apt-get install docker-compose-plugin -y \ -> use docker:cli because package got delayed
   && apt-get upgrade -y \
   && ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
   && chmod 755 /usr/share/powershell/pwsh \
   && ln -s /usr/share/minver-cli/minver /usr/bin/minver \
   && chmod +x /usr/share/minver-cli/minver \
-  && [ -e /usr/local/bin/docker-compose ] && rm /usr/local/bin/docker-compose \
-  && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose \
+  && rm /usr/local/bin/docker-compose \
+  && ln -s /usr/local/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose \
   && chmod +x /usr/libexec/docker/cli-plugins/docker-* \
   # Install module Pester - for root user
   && pwsh -Command "Install-Module -Name Pester -Scope AllUsers -Force" \
