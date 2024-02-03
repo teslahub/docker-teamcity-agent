@@ -13,7 +13,7 @@ https://hub.docker.com/r/teslaconsulting/teamcity-agent
 Update per build.
 
 - TeamCity Agent: `2022.04.5-linux`
-- .NET 8 SDK: 8.0.100-preview.6.23330.14
+- .NET 8 SDK: 8.0
 - .NET 7 SDK: 7.0.306
 - .NET 6 SDK: 6.0.412
 - .NET 5 SDK: 5.0.408
