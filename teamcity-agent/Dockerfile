@@ -90,7 +90,9 @@ ENV DOTNET_SDK_VERSION31=${DOTNET_SDK_VERSION31} \
 
 COPY --from=build /usr /usr
 
-RUN apt-get update \
+RUN  curl -s https://package.perforce.com/perforce.pubkey | gpg --dearmor | tee /usr/share/keyrings/perforce.gpg \
+  && echo 'deb [signed-by=/usr/share/keyrings/perforce.gpg] https://package.perforce.com/apt/ubuntu focal release' > /etc/apt/sources.list.d/perforce.list \
+  && apt-get update \
   && apt-get upgrade -y \
   && ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
   && chmod 755 /usr/share/powershell/pwsh \
