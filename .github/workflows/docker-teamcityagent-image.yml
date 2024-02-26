@@ -127,7 +127,7 @@ jobs:
         id: dotnet8_vers
         shell: pwsh
         run: |
-          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:8.0-preview-jammy sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version')
+          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:8.0-jammy sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version')
           Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
           Write-Output "sdk=$($dotnet_vers[0])" >> $env:GITHUB_OUTPUT
           Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT

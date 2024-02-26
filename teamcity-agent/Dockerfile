@@ -2,7 +2,7 @@ ARG DOTNET_SDK_VERSION31_TAG=3.1-focal
 ARG DOTNET_SDK_VERSION5_TAG=5.0-focal
 ARG DOTNET_SDK_VERSION6_TAG=6.0-focal
 ARG DOTNET_SDK_VERSION7_TAG=7.0-jammy
-ARG DOTNET_SDK_VERSION8_TAG=8.0-preview-jammy
+ARG DOTNET_SDK_VERSION8_TAG=8.0-jammy
 ARG MINVER_IMAGE_TAG=latest
 ARG MINVER_IMAGE=teslaconsulting/minver-cli:$MINVER_IMAGE_TAG
 ARG DOCKER_CLI_IMAGE=docker:cli
@@ -54,9 +54,9 @@ ARG DOTNET_SDK_VERSION8=8.0.0
 ARG ASPNET_VERSION8=8.0.0
 ARG DOTNET_VERSION8=8.0.0
 
-ARG POWERSHELL_VERSION=7.2.6
+ARG POWERSHELL_VERSION=7.4.1
 ARG MINVER_VERSION=4.3.0
-ARG DOCKER_COMPOSE_VERSION=2.20.0
+ARG DOCKER_COMPOSE_VERSION=2.24.6
 # Install PowerShell global tool
 # Install minver Console global tool
 ENV DOTNET_SDK_VERSION31=${DOTNET_SDK_VERSION31} \
@@ -91,7 +91,6 @@ ENV DOTNET_SDK_VERSION31=${DOTNET_SDK_VERSION31} \
 COPY --from=build /usr /usr
 
 RUN apt-get update \
-  # && apt-get install docker-compose-plugin -y \ -> use docker:cli because package got delayed
   && apt-get upgrade -y \
   && ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
   && chmod 755 /usr/share/powershell/pwsh \
