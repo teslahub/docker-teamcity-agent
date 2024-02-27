@@ -20,4 +20,4 @@ Update per build.
 - .NETCore 3.1 SDK: 3.1.426
 - Powershell Core: 7.4.1
 - MinVer Cli: 4.3.0
-- Docker Compose v2: 2.20.0
+- Docker Compose v2: 2.24.6
