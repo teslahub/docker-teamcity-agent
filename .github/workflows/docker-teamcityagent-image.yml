@@ -32,6 +32,16 @@ jobs:
             }
           }
 
+      # https://github.com/orgs/community/discussions/26351
+      # https://github.com/jens-maus/RaspberryMatic/blob/d5044bef3307bc61166377c162569de1a61cf332/.github/workflows/ci.yml#L34-L40
+      - name: Free disk space
+        run: |
+          sudo swapoff -a
+          sudo rm -f /swapfile
+          sudo apt clean
+          docker rmi $(docker image ls -aq)
+          df -h
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
