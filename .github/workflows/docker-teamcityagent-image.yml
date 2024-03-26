@@ -19,7 +19,7 @@ jobs:
       IS_SEMVER_TAG: ${{ false }}
       IS_TAG: ${{ null }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Check Tag Ref
         shell: pwsh
@@ -44,7 +44,7 @@ jobs:
 
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ${{ secrets.DOCKER_HUB_REPOS }}
@@ -62,11 +62,11 @@ jobs:
       #   uses: docker/setup-qemu-action@v1
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
@@ -144,6 +144,17 @@ jobs:
           Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
           Write-Output "pwsh=$($dotnet_vers[3].SubString(11))" >> $env:GITHUB_OUTPUT
 
+      - name: Get .NET 9.0 Versions
+        id: dotnet9_vers
+        shell: pwsh
+        run: |
+          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:9.0-preview-jammy sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version')
+          Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
+          Write-Output "sdk=$($dotnet_vers[0])" >> $env:GITHUB_OUTPUT
+          Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
+          Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
+          Write-Output "pwsh=$($dotnet_vers[3].SubString(11))" >> $env:GITHUB_OUTPUT
+
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v4
@@ -170,6 +181,9 @@ jobs:
             DOTNET_SDK_VERSION8=${{ steps.dotnet8_vers.outputs.sdk }}
             ASPNET_VERSION8=${{ steps.dotnet8_vers.outputs.aspnet }}
             DOTNET_VERSION8=${{ steps.dotnet8_vers.outputs.dotnet }}
-            POWERSHELL_VERSION=${{ steps.dotnet8_vers.outputs.pwsh }}
+            DOTNET_SDK_VERSION9=${{ steps.dotnet9_vers.outputs.sdk }}
+            ASPNET_VERSION9=${{ steps.dotnet9_vers.outputs.aspnet }}
+            DOTNET_VERSION9=${{ steps.dotnet9_vers.outputs.dotnet }}
+            POWERSHELL_VERSION=${{ steps.dotnet9_vers.outputs.pwsh }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
