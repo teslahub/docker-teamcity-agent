@@ -155,35 +155,35 @@ jobs:
           Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
           Write-Output "pwsh=$($dotnet_vers[3].SubString(11))" >> $env:GITHUB_OUTPUT
 
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v4
-        with:
-          context: ./teamcity-agent
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            MINVER_VERSION=${{ steps.minver_version.outputs.version }}
-            DOCKER_COMPOSE_VERSION=${{ steps.docker_compose_version.outputs.version }}
-            DOTNET_SDK_VERSION31=${{ steps.dotnetcore31_vers.outputs.sdk }}
-            ASPNET_VERSION31=${{ steps.dotnetcore31_vers.outputs.aspnet }}
-            DOTNET_VERSION31=${{ steps.dotnetcore31_vers.outputs.dotnet }}
-            DOTNET_SDK_VERSION5=${{ steps.dotnet5_vers.outputs.sdk }}
-            ASPNET_VERSION5=${{ steps.dotnet5_vers.outputs.aspnet }}
-            DOTNET_VERSION5=${{ steps.dotnet5_vers.outputs.dotnet }}
-            DOTNET_SDK_VERSION6=${{ steps.dotnet6_vers.outputs.sdk }}
-            ASPNET_VERSION6=${{ steps.dotnet6_vers.outputs.aspnet }}
-            DOTNET_VERSION6=${{ steps.dotnet6_vers.outputs.dotnet }}
-            DOTNET_SDK_VERSION7=${{ steps.dotnet7_vers.outputs.sdk }}
-            ASPNET_VERSION7=${{ steps.dotnet7_vers.outputs.aspnet }}
-            DOTNET_VERSION7=${{ steps.dotnet7_vers.outputs.dotnet }}
-            DOTNET_SDK_VERSION8=${{ steps.dotnet8_vers.outputs.sdk }}
-            ASPNET_VERSION8=${{ steps.dotnet8_vers.outputs.aspnet }}
-            DOTNET_VERSION8=${{ steps.dotnet8_vers.outputs.dotnet }}
-            DOTNET_SDK_VERSION9=${{ steps.dotnet9_vers.outputs.sdk }}
-            ASPNET_VERSION9=${{ steps.dotnet9_vers.outputs.aspnet }}
-            DOTNET_VERSION9=${{ steps.dotnet9_vers.outputs.dotnet }}
-            POWERSHELL_VERSION=${{ steps.dotnet9_vers.outputs.pwsh }}
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+      # - name: Build and push
+      #   id: docker_build
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: ./teamcity-agent
+      #     push: ${{ github.event_name != 'pull_request' }}
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     labels: ${{ steps.meta.outputs.labels }}
+      #     build-args: |
+      #       MINVER_VERSION=${{ steps.minver_version.outputs.version }}
+      #       DOCKER_COMPOSE_VERSION=${{ steps.docker_compose_version.outputs.version }}
+      #       DOTNET_SDK_VERSION31=${{ steps.dotnetcore31_vers.outputs.sdk }}
+      #       ASPNET_VERSION31=${{ steps.dotnetcore31_vers.outputs.aspnet }}
+      #       DOTNET_VERSION31=${{ steps.dotnetcore31_vers.outputs.dotnet }}
+      #       DOTNET_SDK_VERSION5=${{ steps.dotnet5_vers.outputs.sdk }}
+      #       ASPNET_VERSION5=${{ steps.dotnet5_vers.outputs.aspnet }}
+      #       DOTNET_VERSION5=${{ steps.dotnet5_vers.outputs.dotnet }}
+      #       DOTNET_SDK_VERSION6=${{ steps.dotnet6_vers.outputs.sdk }}
+      #       ASPNET_VERSION6=${{ steps.dotnet6_vers.outputs.aspnet }}
+      #       DOTNET_VERSION6=${{ steps.dotnet6_vers.outputs.dotnet }}
+      #       DOTNET_SDK_VERSION7=${{ steps.dotnet7_vers.outputs.sdk }}
+      #       ASPNET_VERSION7=${{ steps.dotnet7_vers.outputs.aspnet }}
+      #       DOTNET_VERSION7=${{ steps.dotnet7_vers.outputs.dotnet }}
+      #       DOTNET_SDK_VERSION8=${{ steps.dotnet8_vers.outputs.sdk }}
+      #       ASPNET_VERSION8=${{ steps.dotnet8_vers.outputs.aspnet }}
+      #       DOTNET_VERSION8=${{ steps.dotnet8_vers.outputs.dotnet }}
+      #       DOTNET_SDK_VERSION9=${{ steps.dotnet9_vers.outputs.sdk }}
+      #       ASPNET_VERSION9=${{ steps.dotnet9_vers.outputs.aspnet }}
+      #       DOTNET_VERSION9=${{ steps.dotnet9_vers.outputs.dotnet }}
+      #       POWERSHELL_VERSION=${{ steps.dotnet9_vers.outputs.pwsh }}
+      # - name: Image digest
+      #   run: echo ${{ steps.docker_build.outputs.digest }}
