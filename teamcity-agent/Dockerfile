@@ -1,6 +1,6 @@
-ARG DOTNET_SDK_VERSION31_TAG=3.1-focal
-ARG DOTNET_SDK_VERSION5_TAG=5.0-focal
-ARG DOTNET_SDK_VERSION6_TAG=6.0-focal
+#ARG DOTNET_SDK_VERSION31_TAG=3.1-focal
+#ARG DOTNET_SDK_VERSION5_TAG=5.0-focal
+#ARG DOTNET_SDK_VERSION6_TAG=6.0-focal
 ARG DOTNET_SDK_VERSION7_TAG=7.0-jammy
 ARG DOTNET_SDK_VERSION8_TAG=8.0-jammy
 ARG DOTNET_SDK_VERSION9_TAG=9.0-preview-jammy
@@ -13,9 +13,9 @@ ARG TEAMCITYAGENT_IMAGE_TAG=2022.04.5-linux
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION9_TAG} AS dotnetsdk9
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION8_TAG} AS dotnetsdk8
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION7_TAG} AS dotnetsdk7
-FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION6_TAG} AS dotnetsdk6
-FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION5_TAG} AS dotnetsdk5
-FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION31_TAG} AS dotnetsdk3
+#FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION6_TAG} AS dotnetsdk6
+#FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION5_TAG} AS dotnetsdk5
+#FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION31_TAG} AS dotnetsdk3
 FROM $MINVER_IMAGE AS minver
 FROM $DOCKER_CLI_IMAGE AS dockercli
 
@@ -23,9 +23,9 @@ FROM scratch AS build
 # make sure folder exist
 WORKDIR /usr/local/bin
 WORKDIR /usr/share
-COPY --from=dotnetsdk3 /usr/share/dotnet /usr/share/dotnet
-COPY --from=dotnetsdk5 /usr/share/dotnet /usr/share/dotnet
-COPY --from=dotnetsdk6 /usr/share/dotnet /usr/share/dotnet
+#COPY --from=dotnetsdk3 /usr/share/dotnet /usr/share/dotnet
+#COPY --from=dotnetsdk5 /usr/share/dotnet /usr/share/dotnet
+#COPY --from=dotnetsdk6 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk7 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk8 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk9 /usr/share/dotnet /usr/share/dotnet
@@ -37,17 +37,17 @@ FROM ${TEAMCITYAGENT_IMAGE_REPOS}:${TEAMCITYAGENT_IMAGE_TAG} AS final
 
 USER root
 
-ARG DOTNET_SDK_VERSION31=3.1.0
-ARG ASPNET_VERSION31=3.1.0
-ARG DOTNET_VERSION31=3.1.0
+#ARG DOTNET_SDK_VERSION31=3.1.0
+#ARG ASPNET_VERSION31=3.1.0
+#ARG DOTNET_VERSION31=3.1.0
 
-ARG DOTNET_SDK_VERSION5=5.0.0
-ARG ASPNET_VERSION5=5.0.0
-ARG DOTNET_VERSION5=5.0.0
+#ARG DOTNET_SDK_VERSION5=5.0.0
+#ARG ASPNET_VERSION5=5.0.0
+#ARG DOTNET_VERSION5=5.0.0
 
-ARG DOTNET_SDK_VERSION6=6.0.0
-ARG ASPNET_VERSION6=6.0.0
-ARG DOTNET_VERSION6=6.0.0
+#ARG DOTNET_SDK_VERSION6=6.0.0
+#ARG ASPNET_VERSION6=6.0.0
+#ARG DOTNET_VERSION6=6.0.0
 
 ARG DOTNET_SDK_VERSION7=7.0.0
 ARG ASPNET_VERSION7=7.0.0
@@ -66,19 +66,19 @@ ARG MINVER_VERSION=4.3.0
 ARG DOCKER_COMPOSE_VERSION=2.24.6
 # Install PowerShell global tool
 # Install minver Console global tool
-ENV DOTNET_SDK_VERSION31=${DOTNET_SDK_VERSION31} \
-  ASPNET_VERSION31=${ASPNET_VERSION31} \
-  DOTNET_VERSION31=${DOTNET_VERSION31} \
-  \
-  DOTNET_SDK_VERSION5=${DOTNET_SDK_VERSION5} \
-  ASPNET_VERSION5=${ASPNET_VERSION5} \
-  DOTNET_VERSION5=${DOTNET_VERSION5} \
-  \
-  DOTNET_SDK_VERSION6=${DOTNET_SDK_VERSION6} \
-  ASPNET_VERSION6=${ASPNET_VERSION6} \
-  DOTNET_VERSION6=${DOTNET_VERSION6} \
-  \
-  DOTNET_SDK_VERSION7=${DOTNET_SDK_VERSION7} \
+#ENV DOTNET_SDK_VERSION31=${DOTNET_SDK_VERSION31} \
+#  ASPNET_VERSION31=${ASPNET_VERSION31} \
+#  DOTNET_VERSION31=${DOTNET_VERSION31} \
+#  \
+#  DOTNET_SDK_VERSION5=${DOTNET_SDK_VERSION5} \
+#  ASPNET_VERSION5=${ASPNET_VERSION5} \
+#  DOTNET_VERSION5=${DOTNET_VERSION5} \
+#  \
+#  DOTNET_SDK_VERSION6=${DOTNET_SDK_VERSION6} \
+#  ASPNET_VERSION6=${ASPNET_VERSION6} \
+#  DOTNET_VERSION6=${DOTNET_VERSION6} \
+#  \
+ENV   DOTNET_SDK_VERSION7=${DOTNET_SDK_VERSION7} \
   ASPNET_VERSION7=${ASPNET_VERSION7} \
   DOTNET_VERSION7=${DOTNET_VERSION7} \
   \
