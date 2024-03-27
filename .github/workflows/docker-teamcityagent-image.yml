@@ -113,15 +113,15 @@ jobs:
       #    Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
       #    Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
 
-      #- name: Get .NET 6.0 Versions
-      #  id: dotnet6_vers
-      #  shell: pwsh
-      #  run: |
-      #    $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:6.0-focal sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
-      #    Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
-      #    Write-Output "sdk=$($dotnet_vers[0])" >> $env:GITHUB_OUTPUT
-      #    Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
-      #    Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
+      - name: Get .NET 6.0 Versions
+        id: dotnet6_vers
+        shell: pwsh
+        run: |
+          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:6.0-focal sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
+          Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
+          Write-Output "sdk=$($dotnet_vers[0])" >> $env:GITHUB_OUTPUT
+          Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
+          Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
 
       - name: Get .NET 7.0 Versions
         id: dotnet7_vers
@@ -166,6 +166,9 @@ jobs:
           build-args: |
             MINVER_VERSION=${{ steps.minver_version.outputs.version }}
             DOCKER_COMPOSE_VERSION=${{ steps.docker_compose_version.outputs.version }}
+            DOTNET_SDK_VERSION6=${{ steps.dotnet6_vers.outputs.sdk }}
+            ASPNET_VERSION6=${{ steps.dotnet6_vers.outputs.aspnet }}
+            DOTNET_VERSION6=${{ steps.dotnet6_vers.outputs.dotnet }}
             DOTNET_SDK_VERSION7=${{ steps.dotnet7_vers.outputs.sdk }}
             ASPNET_VERSION7=${{ steps.dotnet7_vers.outputs.aspnet }}
             DOTNET_VERSION7=${{ steps.dotnet7_vers.outputs.dotnet }}
@@ -183,9 +186,6 @@ jobs:
             DOTNET_SDK_VERSION5=${{ steps.dotnet5_vers.outputs.sdk }}
             ASPNET_VERSION5=${{ steps.dotnet5_vers.outputs.aspnet }}
             DOTNET_VERSION5=${{ steps.dotnet5_vers.outputs.dotnet }}
-            DOTNET_SDK_VERSION6=${{ steps.dotnet6_vers.outputs.sdk }}
-            ASPNET_VERSION6=${{ steps.dotnet6_vers.outputs.aspnet }}
-            DOTNET_VERSION6=${{ steps.dotnet6_vers.outputs.dotnet }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

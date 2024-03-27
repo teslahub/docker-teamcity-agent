@@ -101,11 +101,11 @@ private:AddBuildArg 'DOCKER_COMPOSE_VERSION' $docker_compose_version
 #private:AddBuildArg 'ASPNET_VERSION5' $dotnet_vers[1]
 #private:AddBuildArg 'DOTNET_VERSION5' $dotnet_vers[2]
 
-#$dotnet_vers = $(docker run --rm mcr.microsoft.com/dotnet/sdk:6.0-focal sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
-#Write-Output ".NET 6.0: Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
-#private:AddBuildArg 'DOTNET_SDK_VERSION6' $dotnet_vers[0]
-#private:AddBuildArg 'ASPNET_VERSION6' $dotnet_vers[1]
-#private:AddBuildArg 'DOTNET_VERSION6' $dotnet_vers[2]
+$dotnet_vers = $(docker run --rm mcr.microsoft.com/dotnet/sdk:6.0-focal sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
+Write-Output ".NET 6.0: Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
+private:AddBuildArg 'DOTNET_SDK_VERSION6' $dotnet_vers[0]
+private:AddBuildArg 'ASPNET_VERSION6' $dotnet_vers[1]
+private:AddBuildArg 'DOTNET_VERSION6' $dotnet_vers[2]
 
 $dotnet_vers = $(docker run --rm mcr.microsoft.com/dotnet/sdk:7.0-jammy sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
 Write-Output ".NET 7.0: Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
