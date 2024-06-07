@@ -12,13 +12,13 @@ https://hub.docker.com/r/teslaconsulting/teamcity-agent
 
 Update per build.
 
-- TeamCity Agent: `2022.04.5-linux`
-- .NET 9 SDK: 9.0.100-preview.2.24157.14
-- .NET 8 SDK: 8.0.203
-- .NET 7 SDK: 7.0.407
-- .NET 6 SDK: 6.0.420
+- TeamCity Agent: `2022.04.7-linux`
+- .NET 9 SDK: 9.0.100-preview.4.24267.66
+- .NET 8 SDK: 8.0.301
+- .NET 7 SDK: 7.0.410
+- .NET 6 SDK: 6.0.423
 - .NET 5 SDK: 5.0.408
 - .NETCore 3.1 SDK: 3.1.426
 - Powershell Core: 7.5.0-preview.2
-- MinVer Cli: 4.3.0
-- Docker Compose v2: 2.26.0
+- MinVer Cli: 5.0.0
+- Docker Compose v2: 2.27.1

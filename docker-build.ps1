@@ -1,10 +1,14 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $false)] [string] $Version = '2022.04.5-20240327-01',
-    [Parameter(Mandatory = $false)] [string] $SourceImageTag = '2022.04.5-linux',
+    [Parameter(Mandatory = $false)] [string] $Version, # = '2022.04.5-20240327-01',
+    [Parameter(Mandatory = $false)] [string] $SourceImageTag = '2022.04.7-linux',
     [Parameter(Mandatory = $false)] [string[]] $DockerRepository = @('teslaconsulting/teamcity-agent'),
     [Parameter(Mandatory = $false)] [string] $Branch,
     [Parameter(Mandatory = $false)] [string] $Sha,
+    [Parameter(Mandatory = $false)] [string] $DotnetSdkVersion6Tag = '6.0-focal',
+    [Parameter(Mandatory = $false)] [string] $DotnetSdkVersion7Tag = '7.0-jammy',
+    [Parameter(Mandatory = $false)] [string] $DotnetSdkVersion8Tag = '8.0-jammy',
+    [Parameter(Mandatory = $false)] [string] $DotnetSdkVersion9Tag = '9.0-preview-noble',
     [Parameter(Mandatory = $false)] [switch] $NoSquash,
     [Parameter(Mandatory = $false)] [switch] $Latest,
     [Parameter(Mandatory = $false)] [switch] $WhatIf
@@ -43,6 +47,11 @@ $root = Split-Path $MyInvocation.MyCommand.Path -Parent -Resolve
 $imageTags = @()
 private:AddImageTag "sha-$($Sha)"
 private:AddImageTag $Branch
+if (!$Version) {
+    $Version = ($SourceImageTag.EndsWith('-linux') ? $SourceImageTag.Substring(0, $SourceImageTag.Length - 5) : $SourceImageTag) + (Get-Date).ToString('yyyyMMdd-HHmmss')
+}
+#Write-Host "Version: $Version"
+
 AddTag '^(\d+)\.\d+(\.\d+)?(-.+)?$'
 AddTag '^(\d+\.\d+)(\.\d+)?(-.+)?$'
 AddTag '^(\d+\.\d+(\.\d+)?)(-.+)?$'
@@ -101,31 +110,36 @@ private:AddBuildArg 'DOCKER_COMPOSE_VERSION' $docker_compose_version
 #private:AddBuildArg 'ASPNET_VERSION5' $dotnet_vers[1]
 #private:AddBuildArg 'DOTNET_VERSION5' $dotnet_vers[2]
 
-$dotnet_vers = $(docker run --rm mcr.microsoft.com/dotnet/sdk:6.0-focal sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
+$dotnet_vers = $(docker run --rm mcr.microsoft.com/dotnet/sdk:$DotnetSdkVersion6Tag sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
 Write-Output ".NET 6.0: Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
 private:AddBuildArg 'DOTNET_SDK_VERSION6' $dotnet_vers[0]
 private:AddBuildArg 'ASPNET_VERSION6' $dotnet_vers[1]
 private:AddBuildArg 'DOTNET_VERSION6' $dotnet_vers[2]
 
-$dotnet_vers = $(docker run --rm mcr.microsoft.com/dotnet/sdk:7.0-jammy sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
+$dotnet_vers = $(docker run --rm mcr.microsoft.com/dotnet/sdk:$DotnetSdkVersion7Tag sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
 Write-Output ".NET 7.0: Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
 private:AddBuildArg 'DOTNET_SDK_VERSION7' $dotnet_vers[0]
 private:AddBuildArg 'ASPNET_VERSION7' $dotnet_vers[1]
 private:AddBuildArg 'DOTNET_VERSION7' $dotnet_vers[2]
 
-$dotnet_vers = $(docker run --rm mcr.microsoft.com/dotnet/sdk:8.0-jammy sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version')
+$dotnet_vers = $(docker run --rm mcr.microsoft.com/dotnet/sdk:$DotnetSdkVersion8Tag sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version')
 Write-Output ".NET 8.0: Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2]) PowerShell:$($dotnet_vers[3].SubString(11))"
 private:AddBuildArg 'DOTNET_SDK_VERSION8' $dotnet_vers[0]
 private:AddBuildArg 'ASPNET_VERSION8' $dotnet_vers[1]
 private:AddBuildArg 'DOTNET_VERSION8' $dotnet_vers[2]
 
-$dotnet_vers = $(docker run --rm mcr.microsoft.com/dotnet/sdk:9.0-preview-jammy sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version')
+$dotnet_vers = $(docker run --rm mcr.microsoft.com/dotnet/sdk:$DotnetSdkVersion9Tag sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version')
 Write-Output ".NET 9.0: Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2]) PowerShell:$($dotnet_vers[3].SubString(11))"
 private:AddBuildArg 'DOTNET_SDK_VERSION9' $dotnet_vers[0]
 private:AddBuildArg 'ASPNET_VERSION9' $dotnet_vers[1]
 private:AddBuildArg 'DOTNET_VERSION9' $dotnet_vers[2]
 private:AddBuildArg 'POWERSHELL_VERSION' $dotnet_vers[3].SubString(11)
 private:AddBuildArg 'POWERSHELL_DISTRIBUTION_CHANNEL' 'PSDocker-DotnetSDK-Ubuntu-20.04'
+
+private:AddBuildArg 'DOTNET_SDK_VERSION6_TAG' $DotnetSdkVersion6Tag
+private:AddBuildArg 'DOTNET_SDK_VERSION7_TAG' $DotnetSdkVersion7Tag
+private:AddBuildArg 'DOTNET_SDK_VERSION8_TAG' $DotnetSdkVersion8Tag
+private:AddBuildArg 'DOTNET_SDK_VERSION9_TAG' $DotnetSdkVersion9Tag
 #===========================================================
 
 Write-Verbose "Execute: docker $params"

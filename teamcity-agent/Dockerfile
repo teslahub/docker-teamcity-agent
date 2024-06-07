@@ -3,12 +3,12 @@
 ARG DOTNET_SDK_VERSION6_TAG=6.0-focal
 ARG DOTNET_SDK_VERSION7_TAG=7.0-jammy
 ARG DOTNET_SDK_VERSION8_TAG=8.0-jammy
-ARG DOTNET_SDK_VERSION9_TAG=9.0-preview-jammy
+ARG DOTNET_SDK_VERSION9_TAG=9.0-preview-noble
 ARG MINVER_IMAGE_TAG=latest
 ARG MINVER_IMAGE=teslaconsulting/minver-cli:$MINVER_IMAGE_TAG
 ARG DOCKER_CLI_IMAGE=docker:cli
 ARG TEAMCITYAGENT_IMAGE_REPOS=jetbrains/teamcity-agent
-ARG TEAMCITYAGENT_IMAGE_TAG=2022.04.5-linux
+ARG TEAMCITYAGENT_IMAGE_TAG=2022.04.7-linux
 
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION9_TAG} AS dotnetsdk9
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION8_TAG} AS dotnetsdk8
@@ -101,11 +101,26 @@ ENV DOTNET_SDK_VERSION6=${DOTNET_SDK_VERSION6} \
 
 COPY --from=build /usr /usr
 
-RUN  curl -s https://package.perforce.com/perforce.pubkey | gpg --dearmor | tee /usr/share/keyrings/perforce.gpg \
-  && echo 'deb [signed-by=/usr/share/keyrings/perforce.gpg] https://package.perforce.com/apt/ubuntu focal release' > /etc/apt/sources.list.d/perforce.list \
-  && apt-get update \
-  && apt-get upgrade -y \
-  && ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
+# RUN  curl -s https://package.perforce.com/perforce.pubkey | gpg --dearmor | tee /usr/share/keyrings/perforce.gpg \
+#   && echo 'deb [signed-by=/usr/share/keyrings/perforce.gpg] https://package.perforce.com/apt/ubuntu focal release' > /etc/apt/sources.list.d/perforce.list \
+#   && apt-get update \
+#   && apt-get upgrade -y \
+#   && ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
+#   && chmod 755 /usr/share/powershell/pwsh \
+#   && ln -s /usr/share/minver-cli/minver /usr/bin/minver \
+#   && chmod +x /usr/share/minver-cli/minver \
+#   && rm /usr/local/bin/docker-compose \
+#   && ln -s /usr/local/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose \
+#   && chmod +x /usr/libexec/docker/cli-plugins/docker-* \
+#   # Install module Pester - for root user
+#   && pwsh -Command "Install-Module -Name Pester -Scope AllUsers -Force" \
+#   && dotnet --help \
+#   && dotnet --info \
+#   && dotnet nuget locals all --clear \
+#   && apt-get clean \
+#   && rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
+
+RUN  ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
   && chmod 755 /usr/share/powershell/pwsh \
   && ln -s /usr/share/minver-cli/minver /usr/bin/minver \
   && chmod +x /usr/share/minver-cli/minver \
@@ -116,9 +131,7 @@ RUN  curl -s https://package.perforce.com/perforce.pubkey | gpg --dearmor | tee 
   && pwsh -Command "Install-Module -Name Pester -Scope AllUsers -Force" \
   && dotnet --help \
   && dotnet --info \
-  && dotnet nuget locals all --clear \
-  && apt-get clean \
-  && rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
+  && dotnet nuget locals all --clear
 
 USER buildagent
 
