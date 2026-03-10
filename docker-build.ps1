@@ -84,11 +84,9 @@ foreach ($dockerImage in $dockerImages) {
 }
 
 #===========================================================
-$minver_help = $(docker run --rm teslaconsulting/minver-cli:latest minver --help)
-Write-Output "Minver help:`n$minver_help"
-$minver_version = $minver_help[0] -Replace '^[^0-9]+([0-9.]+)[^0-9].*$', '$1'
-Write-Output "Minver version: $minver_version"
-private:AddBuildArg 'MINVER_VERSION' $minver_version
+$minver_vers = $(docker run --rm teslaconsulting/minver-cli:latest minver --version)
+Write-Output "Minver Version:`n$($minver_vers[0])"
+private:AddBuildArg 'MINVER_VERSION' $minver_vers[0]
 
 $docker_compose_version = $(docker run --rm docker:cli docker compose version)
 Write-Output "Docker compose version raw: $docker_compose_version"
