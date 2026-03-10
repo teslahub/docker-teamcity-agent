@@ -84,9 +84,9 @@ foreach ($dockerImage in $dockerImages) {
 }
 
 #===========================================================
-$minver_vers = $(docker run --rm teslaconsulting/minver-cli:latest minver --version)
-Write-Output "Minver Version:`n$($minver_vers[0])"
-private:AddBuildArg 'MINVER_VERSION' $minver_vers[0]
+$minver_ver = $(docker run --rm teslaconsulting/minver-cli:latest minver --version)
+Write-Output "Minver Version:`n$minver_ver"
+private:AddBuildArg 'MINVER_VERSION' $minver_ver
 
 $docker_compose_version = $(docker run --rm docker:cli docker compose version)
 Write-Output "Docker compose version raw: $docker_compose_version"

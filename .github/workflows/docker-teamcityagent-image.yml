@@ -80,9 +80,9 @@ jobs:
         id: minver_version
         shell: pwsh
         run: |
-          $minver_vers=$(docker run --rm teslaconsulting/minver-cli:latest minver --version)
-          Write-Output "Minver Version:`n$($minver_vers[0])"
-          Write-Output "version=$($minver_vers[0])" >> $env:GITHUB_OUTPUT
+          $minver_ver=$(docker run --rm teslaconsulting/minver-cli:latest minver --version)
+          Write-Output "Minver Version:`n$minver_ver"
+          Write-Output "version=$minver_ver" >> $env:GITHUB_OUTPUT
 
       - name: Get Docker Compose version
         id: docker_compose_version
