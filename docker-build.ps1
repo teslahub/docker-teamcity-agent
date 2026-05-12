@@ -8,7 +8,7 @@ param (
     [Parameter(Mandatory = $false)] [string] $Sha,
     [Parameter(Mandatory = $false)] [string] $DotnetSdkVersion8Tag = '8.0-jammy',
     [Parameter(Mandatory = $false)] [string] $DotnetSdkVersion9Tag = '9.0-noble',
-    [Parameter(Mandatory = $false)] [string] $DotnetSdkVersion10Tag = '10.0-noble',
+    [Parameter(Mandatory = $false)] [string] $DotnetSdkVersion10Tag = '10.0.202-noble-amd64',
     [Parameter(Mandatory = $false)] [switch] $NoSquash,
     [Parameter(Mandatory = $false)] [switch] $Latest,
     [Parameter(Mandatory = $false)] [switch] $ShowCommand,
@@ -108,17 +108,17 @@ private:AddBuildArg 'DOTNET_SDK_VERSION9' $dotnet_vers[0]
 private:AddBuildArg 'ASPNET_VERSION9' $dotnet_vers[1]
 private:AddBuildArg 'DOTNET_VERSION9' $dotnet_vers[2]
 
-$dotnet_vers = $(docker @paramsContext run --rm --pull=always mcr.microsoft.com/dotnet/sdk:$DotnetSdkVersion10Tag sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version')
-Write-Output ".NET 10.0: Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2]) PowerShell:$($dotnet_vers[3].SubString(11))"
-private:AddBuildArg 'DOTNET_SDK_VERSION10' $dotnet_vers[0]
-private:AddBuildArg 'ASPNET_VERSION10' $dotnet_vers[1]
-private:AddBuildArg 'DOTNET_VERSION10' $dotnet_vers[2]
+$dotnet_vers = $(docker @paramsContext run --rm --pull=always mcr.microsoft.com/dotnet/sdk:$DotnetSdkVersion10Tag sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version;echo $POWERSHELL_DISTRIBUTION_CHANNEL')
+Write-Output ".NET 10.0: Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2]) PowerShell:$($dotnet_vers[3].SubString(11)) channel:$($dotnet_vers[4])"
+# private:AddBuildArg 'DOTNET_SDK_VERSION10' $dotnet_vers[0]
+# private:AddBuildArg 'ASPNET_VERSION10' $dotnet_vers[1]
+# private:AddBuildArg 'DOTNET_VERSION10' $dotnet_vers[2]
 private:AddBuildArg 'POWERSHELL_VERSION' $dotnet_vers[3].SubString(11)
-private:AddBuildArg 'POWERSHELL_DISTRIBUTION_CHANNEL' 'PSDocker-DotnetSDK-Ubuntu-24.04'
+private:AddBuildArg 'POWERSHELL_DISTRIBUTION_CHANNEL' $dotnet_vers[4] # 'PSDocker-DotnetSDK-Ubuntu-24.04'
 
 private:AddBuildArg 'DOTNET_SDK_VERSION8_TAG' $DotnetSdkVersion8Tag
 private:AddBuildArg 'DOTNET_SDK_VERSION9_TAG' $DotnetSdkVersion9Tag
-private:AddBuildArg 'DOTNET_SDK_VERSION10_TAG' $DotnetSdkVersion10Tag
+# private:AddBuildArg 'DOTNET_SDK_VERSION10_TAG' $DotnetSdkVersion10Tag
 #===========================================================
 
 Write-Verbose "Execute: docker $paramsContext $params"

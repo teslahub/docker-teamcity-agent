@@ -1,6 +1,6 @@
 ARG DOTNET_SDK_VERSION8_TAG=8.0-jammy
 ARG DOTNET_SDK_VERSION9_TAG=9.0-noble
-ARG DOTNET_SDK_VERSION10_TAG=10.0-noble
+ARG DOTNET_SDK_VERSION10_TAG=10.0.202-noble-amd64
 ARG TEAMCITYAGENT_IMAGE_REPOS=jetbrains/teamcity-agent
 ARG TEAMCITYAGENT_IMAGE_TAG=2026.1-linux
 
@@ -16,7 +16,7 @@ WORKDIR /usr/share
 # COPY --from=mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION9_TAG} /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk8 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk9 /usr/share/dotnet /usr/share/dotnet
-COPY --from=dotnetsdk10 /usr/share/dotnet /usr/share/dotnet
+# COPY --from=dotnetsdk10 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk10 /usr/share/powershell /usr/share/powershell
 COPY --from=teslaconsulting/minver-cli:latest /usr/share/minver-cli /usr/share/minver-cli
 COPY --from=docker:latest /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
@@ -34,11 +34,11 @@ ARG DOTNET_SDK_VERSION9=9.0.309
 ARG ASPNET_VERSION9=9.0.12
 ARG DOTNET_VERSION9=9.0.12
 
-ARG DOTNET_SDK_VERSION10=10.0.102
-ARG ASPNET_VERSION10=10.0.2
-ARG DOTNET_VERSION10=10.0.2
+ARG DOTNET_SDK_VERSION10=10.0.202
+ARG ASPNET_VERSION10=10.0.6
+ARG DOTNET_VERSION10=10.0.6
 
-ARG POWERSHELL_VERSION=7.6.0-preview.4
+ARG POWERSHELL_VERSION=7.6.0
 ARG POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-DotnetSDK-Ubuntu-24.04
 ARG MINVER_VERSION=7.0.0
 ARG DOCKER_COMPOSE_VERSION=2.24.6

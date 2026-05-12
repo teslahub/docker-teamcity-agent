@@ -20,7 +20,7 @@ jobs:
       IS_TAG: ${{ null }}
       DOTNET_SDK_VERSION8_TAG: 8.0-jammy
       DOTNET_SDK_VERSION9_TAG: 9.0-noble
-      DOTNET_SDK_VERSION10_TAG: 10.0-noble
+      DOTNET_SDK_VERSION10_TAG: 10.0.202-noble-amd64
     steps:
       - uses: actions/checkout@v4
 
@@ -113,12 +113,13 @@ jobs:
         id: dotnet10_vers
         shell: pwsh
         run: |
-          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:${{ env.DOTNET_SDK_VERSION10_TAG }} sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version')
-          Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
+          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:${{ env.DOTNET_SDK_VERSION10_TAG }} sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version;echo $POWERSHELL_DISTRIBUTION_CHANNEL')
+          Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2]) PowerShell:$($dotnet_vers[3].SubString(11)) channel:$($dotnet_vers[4])"
           Write-Output "sdk=$($dotnet_vers[0])" >> $env:GITHUB_OUTPUT
           Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
           Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
           Write-Output "pwsh=$($dotnet_vers[3].SubString(11))" >> $env:GITHUB_OUTPUT
+          Write-Output "channel=$($dotnet_vers[4])" >> $env:GITHUB_OUTPUT
 
       - name: Build and push
         id: docker_build
@@ -137,12 +138,14 @@ jobs:
             DOTNET_SDK_VERSION9=${{ steps.dotnet9_vers.outputs.sdk }}
             ASPNET_VERSION9=${{ steps.dotnet9_vers.outputs.aspnet }}
             DOTNET_VERSION9=${{ steps.dotnet9_vers.outputs.dotnet }}
+            POWERSHELL_VERSION=${{ steps.dotnet10_vers.outputs.pwsh }}
+            POWERSHELL_DISTRIBUTION_CHANNEL=${{ steps.dotnet10_vers.outputs.channel }}
+            DOTNET_SDK_VERSION8_TAG=${{ env.DOTNET_SDK_VERSION8_TAG }}
+            DOTNET_SDK_VERSION9_TAG=${{ env.DOTNET_SDK_VERSION9_TAG }}
+            DOTNET_SDK_VERSION10_TAG=${{ env.DOTNET_SDK_VERSION10_TAG }}
+          unused: |
             DOTNET_SDK_VERSION10=${{ steps.dotnet10_vers.outputs.sdk }}
             ASPNET_VERSION10=${{ steps.dotnet10_vers.outputs.aspnet }}
             DOTNET_VERSION10=${{ steps.dotnet10_vers.outputs.dotnet }}
-            POWERSHELL_VERSION=${{ steps.dotnet10_vers.outputs.pwsh }}
-            DOTNET_SDK_VERSION9_TAG=${{ env.DOTNET_SDK_VERSION9_TAG }}
-            DOTNET_SDK_VERSION10_TAG=${{ env.DOTNET_SDK_VERSION10_TAG }}
-
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
