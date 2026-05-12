@@ -19,8 +19,8 @@ COPY --from=dotnetsdk9 /usr/share/dotnet /usr/share/dotnet
 # COPY --from=dotnetsdk10 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk10 /usr/share/powershell /usr/share/powershell
 COPY --from=teslaconsulting/minver-cli:latest /usr/share/minver-cli /usr/share/minver-cli
-COPY --from=docker:latest /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
-COPY --from=docker:latest /usr/local/bin/containerd* /usr/local/bin/docker* /usr/local/bin/
+# COPY --from=docker:latest /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
+# COPY --from=docker:latest /usr/local/bin/containerd* /usr/local/bin/docker* /usr/local/bin/
 
 FROM ${TEAMCITYAGENT_IMAGE_REPOS}:${TEAMCITYAGENT_IMAGE_TAG} AS final
 
@@ -70,13 +70,17 @@ RUN  ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
   && chmod 755 /usr/share/powershell/pwsh \
   && ln -s /usr/share/minver-cli/minver /usr/bin/minver \
   && chmod +x /usr/share/minver-cli/minver \
-  && rm /usr/local/bin/docker-compose \
-  && ln -s /usr/local/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose \
-  && chmod +x /usr/libexec/docker/cli-plugins/docker-* \
+  # && rm /usr/local/bin/docker-compose \
+  # && ln -s /usr/local/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose \
+  # && chmod +x /usr/local/libexec/docker/cli-plugins/docker-* \
+  && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose \
   # Install module Pester - for root user
   && pwsh -Command "Install-Module -Name Pester -Scope AllUsers -Force" \
   && dotnet --help \
   && dotnet --info \
-  && dotnet nuget locals all --clear
+  && dotnet nuget locals all --clear \
+  && echo "docker version: $(docker --version)" \
+  && echo "docker compose version: $(docker compose version)" \
+  && echo "docker-compose version: $(docker-compose version)"
 
 USER buildagent
