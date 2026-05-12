@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $false)] [string] $Version, # = '2025.11.3-20260512-01',
-    [Parameter(Mandatory = $false)] [string] $SourceImageTag = '2025.11.3-linux',
+    [Parameter(Mandatory = $false)] [string] $Version, # = '2025.11.4-20260512-01',
+    [Parameter(Mandatory = $false)] [string] $SourceImageTag = '2025.11.4-linux',
     [Parameter(Mandatory = $false)] [string[]] $DockerRepository = @('teslaconsulting/teamcity-agent'),
     [Parameter(Mandatory = $false)] [string] $DockerContext = $null,
     [Parameter(Mandatory = $false)] [string] $Branch,
