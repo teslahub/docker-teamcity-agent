@@ -1,10 +1,12 @@
+ARG DOTNET_SDK_VERSION8_TAG=8.0-jammy
 ARG DOTNET_SDK_VERSION9_TAG=9.0-noble
 ARG DOTNET_SDK_VERSION10_TAG=10.0-noble
 ARG TEAMCITYAGENT_IMAGE_REPOS=jetbrains/teamcity-agent
-ARG TEAMCITYAGENT_IMAGE_TAG=2025.11.3-linux
+ARG TEAMCITYAGENT_IMAGE_TAG=2026.1-linux
 
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION10_TAG} AS dotnetsdk10
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION9_TAG} AS dotnetsdk9
+FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION8_TAG} AS dotnetsdk8
 
 FROM scratch AS build
 # make sure folder exist
@@ -12,6 +14,7 @@ WORKDIR /usr/local/bin
 WORKDIR /usr/share
 # ERROR: failed to build: failed to solve: variable expansion is not supported for --from, define a new stage with FROM using ARG from global scope as a workaround
 # COPY --from=mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION9_TAG} /usr/share/dotnet /usr/share/dotnet
+COPY --from=dotnetsdk8 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk9 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk10 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnetsdk10 /usr/share/powershell /usr/share/powershell

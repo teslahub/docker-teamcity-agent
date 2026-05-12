@@ -18,6 +18,7 @@ jobs:
     env:
       IS_SEMVER_TAG: ${{ false }}
       IS_TAG: ${{ null }}
+      DOTNET_SDK_VERSION8_TAG: 8.0-jammy
       DOTNET_SDK_VERSION9_TAG: 9.0-noble
       DOTNET_SDK_VERSION10_TAG: 10.0-noble
     steps:
@@ -88,6 +89,16 @@ jobs:
           echo "Docker compose version only: '$DOCKER_COMPOSE_VERSION'"
           echo "version=$DOCKER_COMPOSE_VERSION" >> $GITHUB_OUTPUT
 
+      - name: Get .NET 8.0 Versions
+        id: dotnet8_vers
+        shell: pwsh
+        run: |
+          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:${{ env.DOTNET_SDK_VERSION8_TAG }} sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
+          Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
+          Write-Output "sdk=$($dotnet_vers[0])" >> $env:GITHUB_OUTPUT
+          Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
+          Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
+
       - name: Get .NET 9.0 Versions
         id: dotnet9_vers
         shell: pwsh
@@ -120,6 +131,9 @@ jobs:
           build-args: |
             MINVER_VERSION=${{ steps.minver_version.outputs.version }}
             DOCKER_COMPOSE_VERSION=${{ steps.docker_compose_version.outputs.version }}
+            DOTNET_SDK_VERSION8=${{ steps.dotnet8_vers.outputs.sdk }}
+            ASPNET_VERSION8=${{ steps.dotnet8_vers.outputs.aspnet }}
+            DOTNET_VERSION8=${{ steps.dotnet8_vers.outputs.dotnet }}
             DOTNET_SDK_VERSION9=${{ steps.dotnet9_vers.outputs.sdk }}
             ASPNET_VERSION9=${{ steps.dotnet9_vers.outputs.aspnet }}
             DOTNET_VERSION9=${{ steps.dotnet9_vers.outputs.dotnet }}

@@ -1,11 +1,12 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $false)] [string] $Version, # = '2025.11.3-20260512-01',
-    [Parameter(Mandatory = $false)] [string] $SourceImageTag = '2025.11.3-linux',
+    [Parameter(Mandatory = $false)] [string] $Version, # = '2026.1-20260512-01',
+    [Parameter(Mandatory = $false)] [string] $SourceImageTag = '2026.1-linux',
     [Parameter(Mandatory = $false)] [string[]] $DockerRepository = @('teslaconsulting/teamcity-agent'),
     [Parameter(Mandatory = $false)] [string] $DockerContext = $null,
     [Parameter(Mandatory = $false)] [string] $Branch,
     [Parameter(Mandatory = $false)] [string] $Sha,
+    [Parameter(Mandatory = $false)] [string] $DotnetSdkVersion8Tag = '8.0-jammy',
     [Parameter(Mandatory = $false)] [string] $DotnetSdkVersion9Tag = '9.0-noble',
     [Parameter(Mandatory = $false)] [string] $DotnetSdkVersion10Tag = '10.0-noble',
     [Parameter(Mandatory = $false)] [switch] $NoSquash,
@@ -95,6 +96,12 @@ $docker_compose_version = $docker_compose_version.Substring('Docker Compose vers
 Write-Output "Docker compose version only: '$docker_compose_version'"
 private:AddBuildArg 'DOCKER_COMPOSE_VERSION' $docker_compose_version
 
+$dotnet_vers = $(docker @paramsContext run --rm --pull=always mcr.microsoft.com/dotnet/sdk:$DotnetSdkVersion8Tag sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
+Write-Output ".NET 8.0: Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
+private:AddBuildArg 'DOTNET_SDK_VERSION8' $dotnet_vers[0]
+private:AddBuildArg 'ASPNET_VERSION8' $dotnet_vers[1]
+private:AddBuildArg 'DOTNET_VERSION8' $dotnet_vers[2]
+
 $dotnet_vers = $(docker @paramsContext run --rm --pull=always mcr.microsoft.com/dotnet/sdk:$DotnetSdkVersion9Tag sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
 Write-Output ".NET 9.0: Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
 private:AddBuildArg 'DOTNET_SDK_VERSION9' $dotnet_vers[0]
@@ -109,6 +116,7 @@ private:AddBuildArg 'DOTNET_VERSION10' $dotnet_vers[2]
 private:AddBuildArg 'POWERSHELL_VERSION' $dotnet_vers[3].SubString(11)
 private:AddBuildArg 'POWERSHELL_DISTRIBUTION_CHANNEL' 'PSDocker-DotnetSDK-Ubuntu-24.04'
 
+private:AddBuildArg 'DOTNET_SDK_VERSION8_TAG' $DotnetSdkVersion8Tag
 private:AddBuildArg 'DOTNET_SDK_VERSION9_TAG' $DotnetSdkVersion9Tag
 private:AddBuildArg 'DOTNET_SDK_VERSION10_TAG' $DotnetSdkVersion10Tag
 #===========================================================
