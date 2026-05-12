@@ -2,7 +2,7 @@ name: Build teamcity-agent image
 
 on:
   push:
-    branches: ["main", "dev*"]
+    branches: ["main", "dev*", "dev/*"]
     tags: ["*.*.*", "*.*", "!minver-*.*.*", "!minver-*.*"]
   pull_request:
     branches: [main]
@@ -18,10 +18,11 @@ jobs:
     env:
       IS_SEMVER_TAG: ${{ false }}
       IS_TAG: ${{ null }}
-      DOTNET_SDK_VERSION6_TAG: 6.0-focal
-      DOTNET_SDK_VERSION7_TAG: 7.0-jammy
-      DOTNET_SDK_VERSION8_TAG: 8.0-jammy
-      DOTNET_SDK_VERSION9_TAG: 9.0-preview-noble
+      #DOTNET_SDK_VERSION6_TAG: 6.0-focal
+      #DOTNET_SDK_VERSION7_TAG: 7.0-jammy
+      #DOTNET_SDK_VERSION8_TAG: 8.0-jammy
+      DOTNET_SDK_VERSION9_TAG: 9.0-noble
+      DOTNET_SDK_VERSION10_TAG: 10.0-noble
     steps:
       - uses: actions/checkout@v4
 
@@ -79,11 +80,9 @@ jobs:
         id: minver_version
         shell: pwsh
         run: |
-          $minver_help=$(docker run --rm teslaconsulting/minver-cli:latest minver --help)
-          Write-Output "Minver help:`n$minver_help"
-          $minver_version=$minver_help[0] -Replace '^[^0-9]+([0-9.]+)[^0-9].*$','$1'
-          Write-Output "Minver version: $minver_version"
-          Write-Output "version=$minver_version" >> $env:GITHUB_OUTPUT
+          $minver_ver=$(docker run --rm teslaconsulting/minver-cli:latest minver --version)
+          Write-Output "Minver Version:`n$minver_ver"
+          Write-Output "version=$minver_ver" >> $env:GITHUB_OUTPUT
 
       - name: Get Docker Compose version
         id: docker_compose_version
@@ -117,42 +116,52 @@ jobs:
       #    Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
       #    Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
 
-      - name: Get .NET 6.0 Versions
-        id: dotnet6_vers
-        shell: pwsh
-        run: |
-          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:${{ env.DOTNET_SDK_VERSION6_TAG }} sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
-          Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
-          Write-Output "sdk=$($dotnet_vers[0])" >> $env:GITHUB_OUTPUT
-          Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
-          Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
+      # - name: Get .NET 6.0 Versions
+      #   id: dotnet6_vers
+      #   shell: pwsh
+      #   run: |
+      #     $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:${{ env.DOTNET_SDK_VERSION6_TAG }} sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
+      #     Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
+      #     Write-Output "sdk=$($dotnet_vers[0])" >> $env:GITHUB_OUTPUT
+      #     Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
+      #     Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
 
-      - name: Get .NET 7.0 Versions
-        id: dotnet7_vers
-        shell: pwsh
-        run: |
-          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:${{ env.DOTNET_SDK_VERSION7_TAG }} sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
-          Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
-          Write-Output "sdk=$($dotnet_vers[0])" >> $env:GITHUB_OUTPUT
-          Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
-          Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
+      # - name: Get .NET 7.0 Versions
+      #   id: dotnet7_vers
+      #   shell: pwsh
+      #   run: |
+      #     $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:${{ env.DOTNET_SDK_VERSION7_TAG }} sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
+      #     Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
+      #     Write-Output "sdk=$($dotnet_vers[0])" >> $env:GITHUB_OUTPUT
+      #     Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
+      #     Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
 
-      - name: Get .NET 8.0 Versions
-        id: dotnet8_vers
-        shell: pwsh
-        run: |
-          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:${{ env.DOTNET_SDK_VERSION8_TAG }} sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version')
-          Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
-          Write-Output "sdk=$($dotnet_vers[0])" >> $env:GITHUB_OUTPUT
-          Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
-          Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
-          Write-Output "pwsh=$($dotnet_vers[3].SubString(11))" >> $env:GITHUB_OUTPUT
+      # - name: Get .NET 8.0 Versions
+      #   id: dotnet8_vers
+      #   shell: pwsh
+      #   run: |
+      #     $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:${{ env.DOTNET_SDK_VERSION8_TAG }} sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
+      #     Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
+      #     Write-Output "sdk=$($dotnet_vers[0])" >> $env:GITHUB_OUTPUT
+      #     Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
+      #     Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
+      #     Write-Output "pwsh=$($dotnet_vers[3].SubString(11))" >> $env:GITHUB_OUTPUT
 
       - name: Get .NET 9.0 Versions
         id: dotnet9_vers
         shell: pwsh
         run: |
-          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:${{ env.DOTNET_SDK_VERSION9_TAG }} sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version')
+          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:${{ env.DOTNET_SDK_VERSION9_TAG }} sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
+          Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
+          Write-Output "sdk=$($dotnet_vers[0])" >> $env:GITHUB_OUTPUT
+          Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
+          Write-Output "dotnet=$($dotnet_vers[2])" >> $env:GITHUB_OUTPUT
+
+      - name: Get .NET 10.0 Versions
+        id: dotnet10_vers
+        shell: pwsh
+        run: |
+          $dotnet_vers=$(docker run --rm mcr.microsoft.com/dotnet/sdk:${{ env.DOTNET_SDK_VERSION10_TAG }} sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION;pwsh --version')
           Write-Output "Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"
           Write-Output "sdk=$($dotnet_vers[0])" >> $env:GITHUB_OUTPUT
           Write-Output "aspnet=$($dotnet_vers[1])" >> $env:GITHUB_OUTPUT
@@ -170,6 +179,22 @@ jobs:
           build-args: |
             MINVER_VERSION=${{ steps.minver_version.outputs.version }}
             DOCKER_COMPOSE_VERSION=${{ steps.docker_compose_version.outputs.version }}
+            DOTNET_SDK_VERSION9=${{ steps.dotnet9_vers.outputs.sdk }}
+            ASPNET_VERSION9=${{ steps.dotnet9_vers.outputs.aspnet }}
+            DOTNET_VERSION9=${{ steps.dotnet9_vers.outputs.dotnet }}
+            DOTNET_SDK_VERSION10=${{ steps.dotnet10_vers.outputs.sdk }}
+            ASPNET_VERSION10=${{ steps.dotnet10_vers.outputs.aspnet }}
+            DOTNET_VERSION10=${{ steps.dotnet10_vers.outputs.dotnet }}
+            POWERSHELL_VERSION=${{ steps.dotnet9_vers.outputs.pwsh }}
+            DOTNET_SDK_VERSION9_TAG=${{ env.DOTNET_SDK_VERSION9_TAG }}
+            DOTNET_SDK_VERSION10_TAG=${{ env.DOTNET_SDK_VERSION10_TAG }}
+          unused: |
+            DOTNET_SDK_VERSION31=${{ steps.dotnetcore31_vers.outputs.sdk }}
+            ASPNET_VERSION31=${{ steps.dotnetcore31_vers.outputs.aspnet }}
+            DOTNET_VERSION31=${{ steps.dotnetcore31_vers.outputs.dotnet }}
+            DOTNET_SDK_VERSION5=${{ steps.dotnet5_vers.outputs.sdk }}
+            ASPNET_VERSION5=${{ steps.dotnet5_vers.outputs.aspnet }}
+            DOTNET_VERSION5=${{ steps.dotnet5_vers.outputs.dotnet }}
             DOTNET_SDK_VERSION6=${{ steps.dotnet6_vers.outputs.sdk }}
             ASPNET_VERSION6=${{ steps.dotnet6_vers.outputs.aspnet }}
             DOTNET_VERSION6=${{ steps.dotnet6_vers.outputs.dotnet }}
@@ -179,21 +204,9 @@ jobs:
             DOTNET_SDK_VERSION8=${{ steps.dotnet8_vers.outputs.sdk }}
             ASPNET_VERSION8=${{ steps.dotnet8_vers.outputs.aspnet }}
             DOTNET_VERSION8=${{ steps.dotnet8_vers.outputs.dotnet }}
-            DOTNET_SDK_VERSION9=${{ steps.dotnet9_vers.outputs.sdk }}
-            ASPNET_VERSION9=${{ steps.dotnet9_vers.outputs.aspnet }}
-            DOTNET_VERSION9=${{ steps.dotnet9_vers.outputs.dotnet }}
-            POWERSHELL_VERSION=${{ steps.dotnet9_vers.outputs.pwsh }}
             DOTNET_SDK_VERSION6_TAG=${{ env.DOTNET_SDK_VERSION6_TAG }}
             DOTNET_SDK_VERSION7_TAG=${{ env.DOTNET_SDK_VERSION7_TAG }}
             DOTNET_SDK_VERSION8_TAG=${{ env.DOTNET_SDK_VERSION8_TAG }}
-            DOTNET_SDK_VERSION9_TAG=${{ env.DOTNET_SDK_VERSION9_TAG }}
-          unused: |
-            DOTNET_SDK_VERSION31=${{ steps.dotnetcore31_vers.outputs.sdk }}
-            ASPNET_VERSION31=${{ steps.dotnetcore31_vers.outputs.aspnet }}
-            DOTNET_VERSION31=${{ steps.dotnetcore31_vers.outputs.dotnet }}
-            DOTNET_SDK_VERSION5=${{ steps.dotnet5_vers.outputs.sdk }}
-            ASPNET_VERSION5=${{ steps.dotnet5_vers.outputs.aspnet }}
-            DOTNET_VERSION5=${{ steps.dotnet5_vers.outputs.dotnet }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
