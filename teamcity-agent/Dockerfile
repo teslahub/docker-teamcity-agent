@@ -82,7 +82,7 @@ RUN  ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
   && docker --version \
   && echo "docker compose version: $(docker compose version)" \
   && echo "docker-compose version: $(docker-compose version)" \
-  && minver --version \
+  && echo "Minver-cli: $(minver --version)" \
   && pwsh --version
 
 USER buildagent
