@@ -41,7 +41,7 @@ ARG DOTNET_VERSION10=10.0.6
 ARG POWERSHELL_VERSION=7.6.0
 ARG POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-DotnetSDK-Ubuntu-24.04
 ARG MINVER_VERSION=7.0.0
-ARG DOCKER_COMPOSE_VERSION=2.24.6
+ARG DOCKER_COMPOSE_VERSION=5.1.3
 
 ENV DOTNET_SDK_VERSION8=${DOTNET_SDK_VERSION8} \
   ASPNET_VERSION8=${ASPNET_VERSION8} \
@@ -79,8 +79,10 @@ RUN  ln -s /usr/share/powershell/pwsh /usr/bin/pwsh \
   && dotnet --help \
   && dotnet --info \
   && dotnet nuget locals all --clear \
-  && echo "docker version: $(docker --version)" \
+  && docker --version \
   && echo "docker compose version: $(docker compose version)" \
-  && echo "docker-compose version: $(docker-compose version)"
+  && echo "docker-compose version: $(docker-compose version)" \
+  && minver --version \
+  && pwsh --version
 
 USER buildagent
