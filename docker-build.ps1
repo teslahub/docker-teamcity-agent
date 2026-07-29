@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $false)] [string] $Version, # = '2026.1-20260512-01',
-    [Parameter(Mandatory = $false)] [string] $SourceImageTag = '2026.1-linux',
+    [Parameter(Mandatory = $false)] [string] $Version, # = '2026.1.3-20260729-01',
+    [Parameter(Mandatory = $false)] [string] $SourceImageTag = '2026.1.3-linux',
     [Parameter(Mandatory = $false)] [string[]] $DockerRepository = @('teslaconsulting/teamcity-agent'),
     [Parameter(Mandatory = $false)] [string] $DockerContext = $null,
     [Parameter(Mandatory = $false)] [string] $Branch,
@@ -85,16 +85,20 @@ foreach ($dockerImage in $dockerImages) {
     $params += @("--tag=$($dockerImage)")
 }
 
+$gitCommitHash = (git rev-parse HEAD)
+$params += @('--label', "git.commit=$($gitCommitHash)")
+
 #===========================================================
 $minver_ver = $(docker @paramsContext run --rm --pull=always teslaconsulting/minver-cli:latest minver --version)
 Write-Output "Minver Version:`n$minver_ver"
 private:AddBuildArg 'MINVER_VERSION' $minver_ver
 
-$docker_compose_version = $(docker @paramsContext run --rm --pull=always docker:latest docker compose version)
+#$docker_compose_version = $(docker @paramsContext run --rm --pull=always docker:latest docker compose version)
+$docker_compose_version = $(docker @paramsContext run --rm --pull=always --entrypoint docker jetbrains/teamcity-agent:$SourceImageTag compose version)
 Write-Output "Docker compose version raw: $docker_compose_version"
 $docker_compose_version = $docker_compose_version.Substring('Docker Compose version v'.Length)
 Write-Output "Docker compose version only: '$docker_compose_version'"
-private:AddBuildArg 'DOCKER_COMPOSE_VERSION' $docker_compose_version
+private:AddBuildArg 'DOCKER_COMPOSE_VERSION' $docker_compose_version using the existing on TeamCity Agent image
 
 $dotnet_vers = $(docker @paramsContext run --rm --pull=always mcr.microsoft.com/dotnet/sdk:$DotnetSdkVersion8Tag sh -c 'echo $DOTNET_SDK_VERSION;echo $ASPNET_VERSION;echo $DOTNET_VERSION')
 Write-Output ".NET 8.0: Version SDK:$($dotnet_vers[0]) ASP.NET:$($dotnet_vers[1]) .NETCore:$($dotnet_vers[2])"

@@ -23,6 +23,19 @@ jobs:
       DOTNET_SDK_VERSION10_TAG: 10.0.202-noble-amd64
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET 10.0.x
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: dotnet info
+        run: dotnet --info
+
+      - name: Install dependencies
+        run: dotnet tool restore --verbosity normal
 
       - name: Check Tag Ref
         shell: pwsh
@@ -128,7 +141,9 @@ jobs:
           context: ./teamcity-agent
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          labels: |
+            ${{ steps.meta.outputs.labels }}
+            git.commit=${{ github.sha }}
           build-args: |
             MINVER_VERSION=${{ steps.minver_version.outputs.version }}
             DOCKER_COMPOSE_VERSION=${{ steps.docker_compose_version.outputs.version }}

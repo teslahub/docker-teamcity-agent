@@ -12,10 +12,10 @@ https://hub.docker.com/r/teslaconsulting/teamcity-agent
 
 Update per build.
 
-- TeamCity Agent: `2026.1-linux`
+- TeamCity Agent: `2026.1.3-linux`
 - .NET 10 SDK: 10.0.202 (reuse the pre-installed .NET SDK on JetBrains TeamCity Agent docker image)
-- .NET 9 SDK: 9.0.313
-- .NET 8 SDK: 8.0.420
+- .NET 9 SDK: 9.0.316
+- .NET 8 SDK: 8.0.423
 - Powershell Core: 7.6.0
 - MinVer Cli: 7.0.0
-- Docker Compose v2: 5.1.3
+- Docker Compose v2: 5.3.1
